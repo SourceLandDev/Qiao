@@ -16,10 +16,7 @@ internal static class EventSystem
         string prePlayer = default;
         PlayerChatEvent.Event += ev =>
         {
-            _ = Main.BotClient.SendMessageAsync(Main.Config.ChatId, Main.Config.MessageThreadId,
-                string.Format(ev.Player.Xuid == prePlayer
-                    ? Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.tochat.repeat"]
-                    : Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.tochat"], ev.Player.RealName, ev.Message.Escape().Format()));
+            _ = Main.BotClient.SendMessageAsync(Main.Config.ChatId, Main.Config.MessageThreadId, Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate(ev.Player.Xuid == prePlayer ? "message.tochat.repeat" : "message.tochat", ev.Player.RealName, ev.Message.Escape().Format()));
             prePlayer = ev.Player.Xuid;
             return true;
         };
@@ -29,9 +26,7 @@ internal static class EventSystem
             {
                 prePlayer = default;
             }
-            _ = Main.BotClient.SendMessageAsync(Main.Config.ChatId, Main.Config.InfoThreadId,
-                string.Format(Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.connected"], ev.Player.RealName
-                    , $"{GlobalService.Level.ActivePlayerCount}"));
+            _ = Main.BotClient.SendMessageAsync(Main.Config.ChatId, Main.Config.InfoThreadId, Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.connected", ev.Player.RealName, GlobalService.Level.ActivePlayerCount));
             return true;
         };
         PlayerLeftEvent.Event += ev =>
@@ -40,9 +35,7 @@ internal static class EventSystem
             {
                 prePlayer = default;
             }
-            _ = Main.BotClient.SendMessageAsync(Main.Config.ChatId, Main.Config.InfoThreadId,
-                string.Format(Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.disconnected"], ev.Player.RealName
-                    , $"{GlobalService.Level.ActivePlayerCount - 1}"));
+            _ = Main.BotClient.SendMessageAsync(Main.Config.ChatId, Main.Config.InfoThreadId, Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.disconnected", ev.Player.RealName, GlobalService.Level.ActivePlayerCount - 1));
             return true;
         };
         PlayerDieEvent.Event += ev =>
@@ -51,62 +44,41 @@ internal static class EventSystem
             {
                 prePlayer = default;
             }
-            _ = Main.BotClient.SendMessageAsync(Main.Config.ChatId, Main.Config.InfoThreadId, string.Format(Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead"], ev.Player.RealName,
-                ev.DamageSource.Cause switch
-                {
-                    ActorDamageCause.Override => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.override"],
-                    ActorDamageCause.Contact => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.contact"],
-                    ActorDamageCause.EntityAttack => string.Format(Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.entityattack"],
-                        (ev.DamageSource.Entity.IsPlayer
-                            ? new Player(ev.DamageSource.Entity.Intptr).RealName
-                            : (string.IsNullOrWhiteSpace(ev.DamageSource.Entity.NameTag)
-                                ? ev.DamageSource.Entity.TypeName
-                                : ev.DamageSource.Entity.NameTag)).Escape()),
-                    ActorDamageCause.Projectile => string.Format(Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.projectile"],
-                        (ev.DamageSource.Entity.Owner.IsPlayer
-                            ? ev.DamageSource.Entity.PlayerOwner.RealName
-                            : (string.IsNullOrWhiteSpace(ev.DamageSource.Entity.Owner.NameTag)
-                                ? ev.DamageSource.Entity.Owner.TypeName
-                                : ev.DamageSource.Entity.Owner.NameTag)).Escape()),
-                    ActorDamageCause.Suffocation => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.suffocation"],
-                    ActorDamageCause.Fall => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.fall"],
-                    ActorDamageCause.Fire => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.fire"],
-                    ActorDamageCause.FireTick => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.firetick"],
-                    ActorDamageCause.Lava => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.lava"],
-                    ActorDamageCause.Drowning => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.drowning"],
-                    ActorDamageCause.BlockExplosion => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.blockexplosion"],
-                    ActorDamageCause.EntityExplosion => string.Format(Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.entityexplosion"],
-                        (ev.DamageSource.Entity.IsPlayer
-                            ? new Player(ev.DamageSource.Entity.Intptr).RealName
-                            : (string.IsNullOrWhiteSpace(ev.DamageSource.Entity.NameTag)
-                                ? ev.DamageSource.Entity.TypeName
-                                : ev.DamageSource.Entity.NameTag)).Escape()),
-                    ActorDamageCause.Void => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.void"],
-                    ActorDamageCause.Suicide => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.suicide"],
-                    ActorDamageCause.Magic => string.Format(Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.magic"],
-                        (ev.DamageSource.Entity.IsPlayer
-                            ? new Player(ev.DamageSource.Entity.Intptr).RealName
-                            : (string.IsNullOrWhiteSpace(ev.DamageSource.Entity.NameTag)
-                                ? ev.DamageSource.Entity.TypeName
-                                : ev.DamageSource.Entity.NameTag)).Escape()),
-                    ActorDamageCause.Wither => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.wither"],
-                    ActorDamageCause.Starve => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.starve"],
-                    ActorDamageCause.Anvil => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.anvil"],
-                    ActorDamageCause.Thorns => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.thorns"],
-                    ActorDamageCause.FallingBlock => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.fallingblock"],
-                    ActorDamageCause.Piston => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.piston"],
-                    ActorDamageCause.FlyIntoWall => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.flyintoeall"],
-                    ActorDamageCause.Magma => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.magma"],
-                    ActorDamageCause.Fireworks => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.fireworks"],
-                    ActorDamageCause.Lightning => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.lightning"],
-                    ActorDamageCause.Charging => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.charging"],
-                    ActorDamageCause.Temperature => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.temperature"],
-                    ActorDamageCause.Freezing => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.freezing"],
-                    ActorDamageCause.Stalactite => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.stalactite"],
-                    ActorDamageCause.Stalagmite => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.stalagmite"],
-                    ActorDamageCause.All => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.sonicBoom"],
-                    _ => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.none"],
-                }));
+            _ = Main.BotClient.SendMessageAsync(Main.Config.ChatId, Main.Config.InfoThreadId, Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.dead", ev.Player.RealName, ev.DamageSource.Cause switch
+            {
+                ActorDamageCause.Override => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.override"],
+                ActorDamageCause.Contact => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.contact"],
+                ActorDamageCause.EntityAttack => Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.dead.cause.entityattack", (ev.DamageSource.Entity.IsPlayer ? new Player(ev.DamageSource.Entity.Intptr).RealName : (string.IsNullOrWhiteSpace(ev.DamageSource.Entity.NameTag) ? ev.DamageSource.Entity.TypeName : ev.DamageSource.Entity.NameTag)).Escape()),
+                ActorDamageCause.Projectile => Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.dead.cause.projectile", (ev.DamageSource.Entity.Owner.IsPlayer ? ev.DamageSource.Entity.PlayerOwner.RealName : (string.IsNullOrWhiteSpace(ev.DamageSource.Entity.Owner.NameTag) ? ev.DamageSource.Entity.Owner.TypeName : ev.DamageSource.Entity.Owner.NameTag)).Escape()),
+                ActorDamageCause.Suffocation => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.suffocation"],
+                ActorDamageCause.Fall => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.fall"],
+                ActorDamageCause.Fire => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.fire"],
+                ActorDamageCause.FireTick => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.firetick"],
+                ActorDamageCause.Lava => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.lava"],
+                ActorDamageCause.Drowning => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.drowning"],
+                ActorDamageCause.BlockExplosion => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.blockexplosion"],
+                ActorDamageCause.EntityExplosion => Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.dead.cause.entityexplosion", (ev.DamageSource.Entity.IsPlayer ? new Player(ev.DamageSource.Entity.Intptr).RealName : (string.IsNullOrWhiteSpace(ev.DamageSource.Entity.NameTag) ? ev.DamageSource.Entity.TypeName : ev.DamageSource.Entity.NameTag)).Escape()),
+                ActorDamageCause.Void => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.void"],
+                ActorDamageCause.Suicide => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.suicide"],
+                ActorDamageCause.Magic => Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.dead.cause.magic", (ev.DamageSource.Entity.IsPlayer ? new Player(ev.DamageSource.Entity.Intptr).RealName : (string.IsNullOrWhiteSpace(ev.DamageSource.Entity.NameTag) ? ev.DamageSource.Entity.TypeName : ev.DamageSource.Entity.NameTag)).Escape()),
+                ActorDamageCause.Wither => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.wither"],
+                ActorDamageCause.Starve => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.starve"],
+                ActorDamageCause.Anvil => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.anvil"],
+                ActorDamageCause.Thorns => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.thorns"],
+                ActorDamageCause.FallingBlock => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.fallingblock"],
+                ActorDamageCause.Piston => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.piston"],
+                ActorDamageCause.FlyIntoWall => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.flyintoeall"],
+                ActorDamageCause.Magma => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.magma"],
+                ActorDamageCause.Fireworks => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.fireworks"],
+                ActorDamageCause.Lightning => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.lightning"],
+                ActorDamageCause.Charging => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.charging"],
+                ActorDamageCause.Temperature => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.temperature"],
+                ActorDamageCause.Freezing => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.freezing"],
+                ActorDamageCause.Stalactite => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.stalactite"],
+                ActorDamageCause.Stalagmite => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.stalagmite"],
+                ActorDamageCause.All => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.sonicBoom"],
+                _ => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.none"],
+            }));
             return true;
         };
     }
@@ -140,60 +112,46 @@ internal static class EventSystem
                                     {
                                         return;
                                     }
-                                    await Main.BotClient.SendMessageAsync(Main.Config.ChatId, Main.Config.InfoThreadId,
-                                        string.Format(Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.commandfeedback"],
-                                            (await Main.BotClient.GetChatAdministratorsAsync(update.Message.Chat.Id)).Any((chatMember) => chatMember.User.Id == update.Message.From.Id) ? Level.RuncmdEx(update.Message.Text[
-                                                1..(update.Message.Text.Length - me.Username.Length - 1)]).Item2 : Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.commandfeedback.notop"]),
-                                        update.Message.MessageId);
+                                    await Main.BotClient.SendMessageAsync(Main.Config.ChatId, Main.Config.InfoThreadId, Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.commandfeedback", (await Main.BotClient.GetChatAdministratorsAsync(update.Message.Chat.Id)).Any((chatMember) => chatMember.User.Id == update.Message.From.Id) ? Level.RuncmdEx(update.Message.Text[1..(update.Message.Text.Length - me.Username.Length - 1)]).Item2 : Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.commandfeedback.notop"]), update.Message.MessageId);
                                     return;
                                 case MessageType.Unknown:
                                     outmsg = Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.type.unknown"];
                                     break;
                                 case MessageType.Photo:
-                                    outmsg = string.Format(Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.type.photo"], update.Message.Caption);
+                                    outmsg = Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.type.photo", update.Message.Caption);
                                     break;
                                 case MessageType.Audio:
-                                    outmsg = string.Format(Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.type.audio"], update.Message.Audio.FileName
-                                        , update.Message.Caption);
+                                    outmsg = Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.type.audio", update.Message.Audio.FileName, update.Message.Caption);
                                     break;
                                 case MessageType.Video:
-                                    outmsg = string.Format(Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.type.video"], update.Message.Video.FileName
-                                        , $"{update.Message.Video.Duration}"
-                                        , update.Message.Caption);
+                                    outmsg = Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.type.video", update.Message.Video.FileName, update.Message.Video.Duration, update.Message.Caption);
                                     break;
                                 case MessageType.Voice:
-                                    outmsg = string.Format(Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.type.voice"]
-                                        , $"{update.Message.Voice.Duration}"
-                                        , update.Message.Caption);
+                                    outmsg = Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.type.voice", update.Message.Voice.Duration, update.Message.Caption);
                                     break;
                                 case MessageType.Document:
-                                    outmsg = string.Format(Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.type.document"]
-                                        , update.Message.Document.FileName
-                                        , update.Message.Caption);
+                                    outmsg = Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.type.document", update.Message.Document.FileName, update.Message.Caption);
                                     break;
                                 case MessageType.Sticker:
-                                    outmsg = string.Format(Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.type.sticker"], update.Message.Sticker.Emoji);
+                                    outmsg = Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.type.sticker", update.Message.Sticker.Emoji);
                                     break;
                                 case MessageType.Location:
                                     outmsg = Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.type.location"];
                                     break;
                                 case MessageType.Contact:
-                                    outmsg = string.Format(Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.type.contact"],
-                                        update.Message.Contact.FirstName + update.Message.Contact.LastName);
+                                    outmsg = Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.type.contact", update.Message.Contact.FirstName + update.Message.Contact.LastName);
                                     break;
                                 case MessageType.Venue:
-                                    outmsg = string.Format(Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.type.venue"], update.Message.Venue.Title);
+                                    outmsg = Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.type.venue", update.Message.Venue.Title);
                                     break;
                                 case MessageType.Game:
-                                    outmsg = string.Format(Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.type.game"], update.Message.Game.Title);
+                                    outmsg = Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.type.game", update.Message.Game.Title);
                                     break;
                                 case MessageType.VideoNote:
-                                    outmsg = string.Format(Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.type.videonote"]
-                                        , $"{update.Message.VideoNote.Duration}"
-                                        , update.Message.Caption);
+                                    outmsg = Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.type.videonote", update.Message.VideoNote.Duration, update.Message.Caption);
                                     break;
                                 case MessageType.Invoice:
-                                    outmsg = string.Format(Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.type.invoice"], update.Message.Invoice.Title);
+                                    outmsg = Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.type.invoice", update.Message.Invoice.Title);
                                     break;
                                 case MessageType.SuccessfulPayment:
                                     outmsg = Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.type.successfulpayment"];
@@ -202,23 +160,19 @@ internal static class EventSystem
                                     outmsg = Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.type.websiteconnected"];
                                     break;
                                 case MessageType.ChatMembersAdded:
-                                    outmsg = string.Format(Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.type.chatmembersadded"],
-                                        $"{update.Message.NewChatMembers[0].FirstName + update.Message.NewChatMembers[0].LastName}");
+                                    outmsg = Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.type.chatmembersadded", update.Message.NewChatMembers[0].FirstName + update.Message.NewChatMembers[0].LastName);
                                     break;
                                 case MessageType.ChatMemberLeft:
-                                    outmsg = string.Format(Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.type.chatmemberleft"],
-                                        $"{update.Message.LeftChatMember.FirstName + update.Message.LeftChatMember.LastName}");
+                                    outmsg = Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.type.chatmemberleft", update.Message.LeftChatMember.FirstName + update.Message.LeftChatMember.LastName);
                                     break;
                                 case MessageType.ChatTitleChanged:
-                                    outmsg = string.Format(Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.type.chattitlechanged"],
-                                        $"{update.Message.NewChatTitle}");
+                                    outmsg = Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.type.chattitlechanged", update.Message.NewChatTitle);
                                     break;
                                 case MessageType.ChatPhotoChanged:
                                     outmsg = Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.type.chatphotochanged"];
                                     break;
                                 case MessageType.MessagePinned:
-                                    outmsg = string.Format(Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.type.messagepinned"],
-                                        $"{(update.Message.PinnedMessage.Type == MessageType.Text ? update.Message.PinnedMessage.Text : update.Message.PinnedMessage.Type.ToString())}");
+                                    outmsg = Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.type.messagepinned", update.Message.PinnedMessage.Type == MessageType.Text ? update.Message.PinnedMessage.Text : update.Message.PinnedMessage.Type.ToString());
                                     break;
                                 case MessageType.ChatPhotoDeleted:
                                     outmsg = Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.type.chatphotodeleted"];
@@ -239,11 +193,10 @@ internal static class EventSystem
                                     outmsg = Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.type.migratedfromgroup"];
                                     break;
                                 case MessageType.Poll:
-                                    outmsg = string.Format(Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.type.poll"], update.Message.Poll.Question);
+                                    outmsg = Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.type.poll", update.Message.Poll.Question);
                                     break;
                                 case MessageType.Dice:
-                                    outmsg = string.Format(Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.type.dice"],
-                                        $"{update.Message.Dice.Value}/{(update.Message.Dice.Emoji is "🏀" or "⚽" ? "5" : update.Message.Dice.Emoji == "🎰" ? "64" : "6")}");
+                                    outmsg = Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.type.dice", update.Message.Dice.Value, update.Message.Dice.Emoji is "🏀" or "⚽" ? "5" : update.Message.Dice.Emoji == "🎰" ? "64" : "6");
                                     break;
                                 case MessageType.MessageAutoDeleteTimerChanged:
                                     outmsg = Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.type.messageautodeletetimerchanged"];
@@ -298,12 +251,8 @@ internal static class EventSystem
                             {
                                 return;
                             }
-                            outmsg = Main.EmojiHelper[CultureInfo.CurrentCulture.Name]._languageData.Aggregate(outmsg,
-                                (current, emoji) => current.Replace(emoji.Key, emoji.Value));
-                            Level.BroadcastText(
-                                string.Format(Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.toserver"], update.Message.Date.AddHours(TimeZoneInfo.Local.BaseUtcOffset.Hours)
-                                    , $"{(update.Message.SenderChat == null ? update.Message.From.FirstName + update.Message.From.LastName : update.Message.SenderChat.Title)}"
-                                    , (update.Message.MessageThreadId ?? 0).ToString(), outmsg), TextType.RAW);
+                            outmsg = Main.EmojiHelper[CultureInfo.CurrentCulture.Name]._languageData.Aggregate(outmsg, (current, emoji) => current.Replace(emoji.Key, emoji.Value));
+                            Level.BroadcastText(Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.toserver", update.Message.Date.AddHours(TimeZoneInfo.Local.BaseUtcOffset.Hours), update.Message.SenderChat == null ? update.Message.From.FirstName + update.Message.From.LastName : update.Message.SenderChat.Title, (update.Message.MessageThreadId ?? 0).ToString(), outmsg), TextType.RAW);
                         }, (_, exception, _) =>
                         {
                             try
@@ -312,7 +261,7 @@ internal static class EventSystem
                             }
                             catch (ApiRequestException ex)
                             {
-                                Main.Logger.Warn.WriteLine(string.Format(Main.I18nHelper[CultureInfo.CurrentCulture.Name]["bot.failed.listenstart"], ex.Message));
+                                Main.Logger.Warn.WriteLine(Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("bot.failed.listenstart", ex.Message));
                             }
                             catch (RequestException) { }
                             catch (AggregateException ex)
@@ -321,7 +270,7 @@ internal static class EventSystem
                             }
                             catch (Exception ex)
                             {
-                                Main.Logger.Warn.WriteLine(string.Format(Main.I18nHelper[CultureInfo.CurrentCulture.Name]["bot.failed.listenstart"], ex.Message));
+                                Main.Logger.Warn.WriteLine(Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("bot.failed.listenstart", ex.Message));
                                 Main.Logger.Debug.WriteLine(ex);
                             }
                         });
@@ -329,7 +278,7 @@ internal static class EventSystem
                     }
                     catch (ApiRequestException ex)
                     {
-                        Main.Logger.Warn.WriteLine(string.Format(Main.I18nHelper[CultureInfo.CurrentCulture.Name]["bot.failed.listenstart"], ex.Message));
+                        Main.Logger.Warn.WriteLine(Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("bot.failed.listenstart", ex.Message));
                     }
                     catch (RequestException) { }
                     catch (AggregateException ex)
@@ -338,7 +287,7 @@ internal static class EventSystem
                     }
                     catch (Exception ex)
                     {
-                        Main.Logger.Warn.WriteLine(string.Format(Main.I18nHelper[CultureInfo.CurrentCulture.Name]["bot.failed.listenstart"], ex.Message));
+                        Main.Logger.Warn.WriteLine(Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("bot.failed.listenstart", ex.Message));
                         Main.Logger.Debug.WriteLine(ex);
                     }
                 }

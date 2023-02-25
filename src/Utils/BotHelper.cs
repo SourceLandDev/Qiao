@@ -17,7 +17,7 @@ internal static class BotHelper
             }
             catch (ApiRequestException ex)
             {
-                Main.Logger.Warn.WriteLine(string.Format(Main.I18nHelper[CultureInfo.CurrentCulture.Name]["bot.failed.messagesend"], ex.Message));
+                Main.Logger.Warn.WriteLine(Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("bot.failed.messagesend", ex.Message));
                 break;
             }
             catch (RequestException) { }
@@ -30,7 +30,7 @@ internal static class BotHelper
             }
             catch (Exception ex)
             {
-                Main.Logger.Warn.WriteLine(string.Format(Main.I18nHelper[CultureInfo.CurrentCulture.Name]["bot.failed.messagesend"], ex.Message));
+                Main.Logger.Warn.WriteLine(Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("bot.failed.messagesend", ex.Message));
                 Main.Logger.Debug.WriteLine(ex);
             }
         }
@@ -54,7 +54,7 @@ internal static class BotHelper
                 rt = exception.WriteAllException() || rt;
                 continue;
             }
-            Main.Logger.Warn.WriteLine(string.Format(Main.I18nHelper[CultureInfo.CurrentCulture.Name]["bot.failed.messagesend"], innerEx.Message));
+            Main.Logger.Warn.WriteLine(Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("bot.failed.messagesend", innerEx.Message));
         }
         return rt;
     }
