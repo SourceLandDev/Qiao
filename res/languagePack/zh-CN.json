@@ -40,7 +40,7 @@
     "message.dead.cause.None": "未知原因死了",
     "message.commandfeedback": "*命令回传*\n{0}",
     "message.commandfeedback.notop": "权限不足",
-    "message.toserver": "{0:HH':'mm} {1}（{2}）：{3}}",
+    "message.toserver": "{0:HH':'mm} {1}（{2}）：{3}",
     "message.type.unknown": "§o未知消息",
     "message.type.photo": "§o图片 {0}",
     "message.type.audio": "§o音频 {0} {1}",
