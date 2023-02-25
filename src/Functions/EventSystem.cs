@@ -172,7 +172,7 @@ internal static class EventSystem
                                     outmsg = Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.type.chatphotochanged"];
                                     break;
                                 case MessageType.MessagePinned:
-                                    outmsg = Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.type.messagepinned", update.Message.PinnedMessage.Type == MessageType.Text ? update.Message.PinnedMessage.Text : update.Message.PinnedMessage.Type.ToString());
+                                    outmsg = Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.type.messagepinned", update.Message.PinnedMessage.Type == MessageType.Text ? update.Message.PinnedMessage.Text : update.Message.PinnedMessage.Type);
                                     break;
                                 case MessageType.ChatPhotoDeleted:
                                     outmsg = Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.type.chatphotodeleted"];
@@ -252,7 +252,7 @@ internal static class EventSystem
                                 return;
                             }
                             outmsg = Main.EmojiHelper[CultureInfo.CurrentCulture.Name]._languageData.Aggregate(outmsg, (current, emoji) => current.Replace(emoji.Key, emoji.Value));
-                            Level.BroadcastText(Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.toserver", update.Message.Date.AddHours(TimeZoneInfo.Local.BaseUtcOffset.Hours), update.Message.SenderChat == null ? update.Message.From.FirstName + update.Message.From.LastName : update.Message.SenderChat.Title, (update.Message.MessageThreadId ?? 0).ToString(), outmsg), TextType.RAW);
+                            Level.BroadcastText(Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.toserver", update.Message.Date.AddHours(TimeZoneInfo.Local.BaseUtcOffset.Hours), update.Message.SenderChat == null ? update.Message.From.FirstName + update.Message.From.LastName : update.Message.SenderChat.Title, update.Message.MessageThreadId ?? 0, outmsg), TextType.RAW);
                         }, (_, exception, _) =>
                         {
                             try
