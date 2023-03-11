@@ -1,4 +1,4 @@
-﻿using LiteLoader;
+using LiteLoader;
 using LiteLoader.Event;
 using MC;
 using Qiao.Utils;

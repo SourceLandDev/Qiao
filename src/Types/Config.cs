@@ -1,7 +1,7 @@
-﻿using System.Text.Json.Serialization;
+using System.Text.Json.Serialization;
 
 namespace Qiao.Types;
-internal struct Config
+internal record struct Config
 {
     [JsonPropertyName("token")]
     public required string Token { get; set; }

@@ -1,4 +1,4 @@
-﻿using LiteLoader.RemoteCall;
+using LiteLoader.RemoteCall;
 using Qiao.Utils;
 
 namespace Qiao.Functions;

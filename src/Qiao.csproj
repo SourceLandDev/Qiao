@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>none</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
   </PropertyGroup>
 
@@ -14,6 +14,7 @@
   <ItemGroup>
     <Reference Include="LiteLoader.NET">
       <HintPath>..\SDK\refs\LiteLoader\LiteLoader.NET.dll</HintPath>
+      <Private>false</Private>
     </Reference>
   </ItemGroup>
 

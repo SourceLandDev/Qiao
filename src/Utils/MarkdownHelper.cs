@@ -1,4 +1,4 @@
-﻿namespace Qiao.Utils;
+namespace Qiao.Utils;
 internal static class MarkdownHelper
 {
     internal static string Escape(this string input) => input.ToString().Replace("_", "\\_").Replace("*", "\\*").Replace("[", "\\[").Replace("]", "\\]")

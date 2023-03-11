@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types.Enums;
