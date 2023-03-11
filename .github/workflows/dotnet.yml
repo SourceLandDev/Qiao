@@ -32,4 +32,4 @@ jobs:
     - name: Upload Artifact
       uses: actions/upload-artifact@v3
       with:
-        path: LLNET/bin/Release/net7.0/publish
+        path: src/bin/Release/net7.0/publish
