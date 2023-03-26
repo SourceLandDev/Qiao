@@ -11,20 +11,20 @@ using Telegram.Bot.Types.Enums;
 namespace Qiao.Functions;
 internal static class EventSystem
 {
+    private static string _prePlayer;
     internal static void SetupPlayer()
     {
-        string prePlayer = default;
         PlayerChatEvent.Event += ev =>
         {
-            _ = Main.BotClient.SendMessageAsync(Main.Config.ChatId, Main.Config.MessageThreadId, Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate(ev.Player.Xuid == prePlayer ? "message.tochat.repeat" : "message.tochat", ev.Player.RealName, ev.Message.Escape().Format()));
-            prePlayer = ev.Player.Xuid;
+            _ = Main.BotClient.SendMessageAsync(Main.Config.ChatId, Main.Config.MessageThreadId, Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate(ev.Player.Xuid == _prePlayer ? "message.tochat.repeat" : "message.tochat", ev.Player.RealName, ev.Message.Escape().Format()));
+            _prePlayer = ev.Player.Xuid;
             return true;
         };
         PlayerJoinEvent.Event += ev =>
         {
             if (Main.Config.MessageThreadId == Main.Config.InfoThreadId)
             {
-                prePlayer = default;
+                _prePlayer = default;
             }
             _ = Main.BotClient.SendMessageAsync(Main.Config.ChatId, Main.Config.InfoThreadId, Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.connected", ev.Player.RealName, GlobalService.Level.ActivePlayerCount));
             return true;
@@ -33,7 +33,7 @@ internal static class EventSystem
         {
             if (Main.Config.MessageThreadId == Main.Config.InfoThreadId)
             {
-                prePlayer = default;
+                _prePlayer = default;
             }
             _ = Main.BotClient.SendMessageAsync(Main.Config.ChatId, Main.Config.InfoThreadId, Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.disconnected", ev.Player.RealName, GlobalService.Level.ActivePlayerCount - 1));
             return true;
@@ -42,7 +42,7 @@ internal static class EventSystem
         {
             if (Main.Config.MessageThreadId == Main.Config.InfoThreadId)
             {
-                prePlayer = default;
+                _prePlayer = default;
             }
             _ = Main.BotClient.SendMessageAsync(Main.Config.ChatId, Main.Config.InfoThreadId, Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.dead", ev.Player.RealName, ev.DamageSource.Cause switch
             {
@@ -253,6 +253,7 @@ internal static class EventSystem
                             }
                             outmsg = Main.EmojiHelper[CultureInfo.CurrentCulture.Name]._languageData.Aggregate(outmsg, (current, emoji) => current.Replace(emoji.Key, emoji.Value));
                             Level.BroadcastText(Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.toserver", update.Message.Date.AddHours(TimeZoneInfo.Local.BaseUtcOffset.Hours), update.Message.SenderChat == null ? update.Message.From.FirstName + update.Message.From.LastName : update.Message.SenderChat.Title, update.Message.MessageThreadId ?? 0, outmsg), TextType.RAW);
+                            _prePlayer = default;
                         }, (_, exception, _) =>
                         {
                             try
