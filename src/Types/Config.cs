@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
 
 namespace Qiao.Types;
-internal record struct Config
+internal record Config
 {
     [JsonPropertyName("token")]
     public required string Token { get; set; }
@@ -13,4 +13,6 @@ internal record struct Config
     public required int InfoThreadId { get; set; }
     [JsonPropertyName("proxy")]
     public required string ProxyUrl { get; set; }
+    [JsonPropertyName("asyncmode")]
+    public required bool AsyncMode { get; set; }
 }

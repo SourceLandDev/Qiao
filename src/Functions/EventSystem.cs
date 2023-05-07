@@ -252,7 +252,7 @@ internal static class EventSystem
                                 return;
                             }
                             outmsg = Main.EmojiHelper[CultureInfo.CurrentCulture.Name]._languageData.Aggregate(outmsg, (current, emoji) => current.Replace(emoji.Key, emoji.Value));
-                            Level.BroadcastText(Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.toserver", update.Message.Date.AddHours(TimeZoneInfo.Local.BaseUtcOffset.Hours), update.Message.SenderChat == null ? update.Message.From.FirstName + update.Message.From.LastName : update.Message.SenderChat.Title, update.Message.MessageThreadId ?? 0, outmsg), TextType.RAW);
+                            Level.BroadcastText(Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.toserver", update.Message.Date.AddHours(TimeZoneInfo.Local.BaseUtcOffset.Hours), update.Message.SenderChat == null ? update.Message.From.FirstName + update.Message.From.LastName : update.Message.SenderChat.Title, outmsg), TextType.RAW);
                             _prePlayer = default;
                         }, (_, exception, _) =>
                         {
@@ -295,7 +295,11 @@ internal static class EventSystem
             });
             if (!string.IsNullOrWhiteSpace(Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.server.start"]))
             {
-                Main.BotClient.SendMessageAsync(Main.Config.ChatId, Main.Config.InfoThreadId, Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.server.start"]).Wait();
+                Task task = Main.BotClient.SendMessageAsync(Main.Config.ChatId, Main.Config.InfoThreadId, Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.server.start"]);
+                if (Main.Config.AsyncMode)
+                {
+                    task.Wait();
+                }
             }
             return true;
         };
@@ -303,7 +307,11 @@ internal static class EventSystem
         {
             if (!string.IsNullOrWhiteSpace(Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.server.stop"]))
             {
-                Main.BotClient.SendMessageAsync(Main.Config.ChatId, Main.Config.InfoThreadId, Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.server.stop"]).Wait();
+                Task task = Main.BotClient.SendMessageAsync(Main.Config.ChatId, Main.Config.InfoThreadId, Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.server.stop"]);
+                if (Main.Config.AsyncMode)
+                {
+                    task.Wait();
+                }
             }
             return true;
         };
