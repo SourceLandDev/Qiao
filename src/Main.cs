@@ -27,7 +27,7 @@ public class Main : IPluginInitializer
         InfoThreadId = default,
         ProxyUrl = string.Empty,
         Token = string.Empty,
-        AsyncMode = false
+        SyncMode = true
     };
     public void OnInitialize()
     {

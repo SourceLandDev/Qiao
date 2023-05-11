@@ -13,6 +13,6 @@ internal record Config
     public required int InfoThreadId { get; set; }
     [JsonPropertyName("proxy")]
     public required string ProxyUrl { get; set; }
-    [JsonPropertyName("asyncmode")]
-    public required bool AsyncMode { get; set; }
+    [JsonPropertyName("syncmode")]
+    public required bool SyncMode { get; set; }
 }

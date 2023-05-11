@@ -296,7 +296,7 @@ internal static class EventSystem
             if (!string.IsNullOrWhiteSpace(Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.server.start"]))
             {
                 Task task = Main.BotClient.SendMessageAsync(Main.Config.ChatId, Main.Config.InfoThreadId, Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.server.start"]);
-                if (Main.Config.AsyncMode)
+                if (Main.Config.SyncMode)
                 {
                     task.Wait();
                 }
@@ -308,7 +308,7 @@ internal static class EventSystem
             if (!string.IsNullOrWhiteSpace(Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.server.stop"]))
             {
                 Task task = Main.BotClient.SendMessageAsync(Main.Config.ChatId, Main.Config.InfoThreadId, Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.server.stop"]);
-                if (Main.Config.AsyncMode)
+                if (Main.Config.SyncMode)
                 {
                     task.Wait();
                 }
