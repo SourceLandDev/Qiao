@@ -1,54 +1,57 @@
+using System.Text;
+
 namespace Qiao.Utils;
 internal static class MarkdownHelper
 {
-    internal static string Escape(this string input) => input.ToString().Replace("_", "\\_").Replace("*", "\\*").Replace("[", "\\[").Replace("]", "\\]")
-            .Replace("(", "\\(").Replace(")", "\\)").Replace("~", "\\~").Replace("`", "\\`")
-            .Replace(">", "\\>").Replace("#", "\\#").Replace("+", "\\+").Replace("-", "\\-")
-            .Replace("=", "\\=").Replace("|", "\\|").Replace("{", "\\{").Replace("}", "\\}")
-            .Replace(".", "\\.").Replace("!", "\\!");
+    internal static string Escape(this string input) => new StringBuilder(input).Replace("_", "\\_")
+        .Replace("*", "\\*").Replace("[", "\\[").Replace("]", "\\]").Replace("(", "\\(").Replace(")", "\\)")
+        .Replace("~", "\\~").Replace("`", "\\`").Replace(">", "\\>").Replace("#", "\\#").Replace("+", "\\+")
+        .Replace("-", "\\-").Replace("=", "\\=").Replace("|", "\\|").Replace("{", "\\{").Replace("}", "\\}")
+        .Replace(".", "\\.").Replace("!", "\\!").ToString();
     internal static string Format(this string input)
     {
-        string cacheend = string.Empty;
-        for (int index = input.IndexOf("§"); index > -1 && index + 1 != input.Length; index = input.IndexOf("§", index + 1))
+        StringBuilder stringBuilder = new(input);
+        StringBuilder cacheEnding = new();
+        for (int index = stringBuilder.ToString().IndexOf("§"); index > -1 && index + 1 != stringBuilder.Length; index = stringBuilder.ToString().IndexOf("§", index + 1))
         {
-            switch (input.ToUpperInvariant()[index + 1])
+            switch (char.ToUpperInvariant(stringBuilder[index + 1]))
             {
                 case 'L':
-                    input = input.Remove(index, 2);
-                    input = input.Insert(index, "*");
-                    cacheend = $"*{cacheend}";
+                    stringBuilder.Remove(index, 2);
+                    stringBuilder.Insert(index, "*");
+                    cacheEnding.Insert(0, "*");
                     break;
                 case 'O':
-                    input = input.Remove(index, 2);
-                    input = input.Insert(index, "_");
-                    cacheend = $"_{(cacheend.StartsWith("__") ? "\0" : string.Empty)}{cacheend}";
+                    stringBuilder.Remove(index, 2);
+                    stringBuilder.Insert(index, "_");
+                    cacheEnding.Insert(0, $"_{((cacheEnding.Length > 1 && cacheEnding[0] is '_' && cacheEnding[1] is '_') ? ' ' : string.Empty)}");
                     break;
                 case 'N':
-                    input = input.Remove(index, 2);
-                    input = input.Insert(index, "__");
-                    cacheend = $"__{cacheend}";
+                    stringBuilder.Remove(index, 2);
+                    stringBuilder.Insert(index, "__");
+                    cacheEnding.Insert(0, "__");
                     break;
                 case 'M':
-                    input = input.Remove(index, 2);
-                    input = input.Insert(index, "~");
-                    cacheend = $"~{cacheend}";
+                    stringBuilder.Remove(index, 2);
+                    stringBuilder.Insert(index, "~");
+                    cacheEnding.Insert(0, "~");
                     break;
                 case 'K':
-                    input = input.Remove(index, 2);
-                    input = input.Insert(index, "||");
-                    cacheend = $"||{cacheend}";
+                    stringBuilder.Remove(index, 2);
+                    stringBuilder.Insert(index, "||");
+                    cacheEnding.Insert(0, "||");
                     break;
                 case 'R':
-                    input = input.Remove(index, 2);
-                    input = input.Insert(index, cacheend);
-                    cacheend = string.Empty;
+                    stringBuilder.Remove(index, 2);
+                    stringBuilder.Insert(index, cacheEnding);
+                    cacheEnding.Clear();
                     break;
             }
         }
-        if (!string.IsNullOrEmpty(cacheend))
+        if (cacheEnding.Length > 0)
         {
-            input += cacheend;
+            stringBuilder.Append(cacheEnding);
         }
-        return input;
+        return stringBuilder.ToString();
     }
 }
