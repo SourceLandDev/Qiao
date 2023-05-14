@@ -67,7 +67,7 @@ internal static class EventSystem
                 ActorDamageCause.Thorns => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.thorns"],
                 ActorDamageCause.FallingBlock => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.fallingblock"],
                 ActorDamageCause.Piston => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.piston"],
-                ActorDamageCause.FlyIntoWall => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.flyintoeall"],
+                ActorDamageCause.FlyIntoWall => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.flyintowall"],
                 ActorDamageCause.Magma => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.magma"],
                 ActorDamageCause.Fireworks => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.fireworks"],
                 ActorDamageCause.Lightning => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.lightning"],
