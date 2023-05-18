@@ -1,14 +1,15 @@
 using LiteLoader;
 using LiteLoader.Event;
 using MC;
-using Qiao.Utils;
+using MessageSync.Utils;
+using Qiao;
 using System.Globalization;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
-namespace Qiao.Functions;
+namespace MessageSync.Functions;
 internal static class EventSystem
 {
     private static string _prePlayer;
@@ -16,7 +17,7 @@ internal static class EventSystem
     {
         PlayerChatEvent.Event += ev =>
         {
-            _ = Main.BotClient.SendMessageAsync(Main.Config.ChatId, Main.Config.MessageThreadId, Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate(ev.Player.Xuid == _prePlayer ? "message.tochat.repeat" : "message.tochat", ev.Player.RealName, ev.Message.Escape().Format()));
+            _ = Bot.Client.SendMessageAsync(Main.Config.ChatId, Main.Config.MessageThreadId, Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate(ev.Player.Xuid == _prePlayer ? "message.tochat.repeat" : "message.tochat", ev.Player.RealName, ev.Message.Escape().Format()));
             _prePlayer = ev.Player.Xuid;
             return true;
         };
@@ -26,7 +27,7 @@ internal static class EventSystem
             {
                 _prePlayer = default;
             }
-            _ = Main.BotClient.SendMessageAsync(Main.Config.ChatId, Main.Config.InfoThreadId, Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.connected", ev.Player.RealName, GlobalService.Level.ActivePlayerCount));
+            _ = Bot.Client.SendMessageAsync(Main.Config.ChatId, Main.Config.InfoThreadId, Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.connected", ev.Player.RealName, GlobalService.Level.ActivePlayerCount));
             return true;
         };
         PlayerLeftEvent.Event += ev =>
@@ -35,7 +36,7 @@ internal static class EventSystem
             {
                 _prePlayer = default;
             }
-            _ = Main.BotClient.SendMessageAsync(Main.Config.ChatId, Main.Config.InfoThreadId, Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.disconnected", ev.Player.RealName, GlobalService.Level.ActivePlayerCount - 1));
+            _ = Bot.Client.SendMessageAsync(Main.Config.ChatId, Main.Config.InfoThreadId, Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.disconnected", ev.Player.RealName, GlobalService.Level.ActivePlayerCount - 1));
             return true;
         };
         PlayerDieEvent.Event += ev =>
@@ -44,7 +45,7 @@ internal static class EventSystem
             {
                 _prePlayer = default;
             }
-            _ = Main.BotClient.SendMessageAsync(Main.Config.ChatId, Main.Config.InfoThreadId, Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.dead", ev.Player.RealName, ev.DamageSource.Cause switch
+            _ = Bot.Client.SendMessageAsync(Main.Config.ChatId, Main.Config.InfoThreadId, Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.dead", ev.Player.RealName, ev.DamageSource.Cause switch
             {
                 ActorDamageCause.Override => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.override"],
                 ActorDamageCause.Contact => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.contact"],
@@ -92,7 +93,7 @@ internal static class EventSystem
                 {
                     try
                     {
-                        Main.BotClient.StartReceiving(async (_, update, _) =>
+                        Bot.Client.StartReceiving(async (_, update, _) =>
                         {
                             string outmsg = default;
                             if (update.Type != UpdateType.Message || update.Message.Chat.Id != Main.Config.ChatId)
@@ -107,12 +108,12 @@ internal static class EventSystem
                                         outmsg = update.Message.Text;
                                         break;
                                     }
-                                    User me = await Main.BotClient.GetMeAsync();
+                                    User me = await Bot.Client.GetMeAsync();
                                     if (!update.Message.Text.EndsWith($"@{me.Username}"))
                                     {
                                         return;
                                     }
-                                    await Main.BotClient.SendMessageAsync(Main.Config.ChatId, Main.Config.InfoThreadId, Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.commandfeedback", (await Main.BotClient.GetChatAdministratorsAsync(update.Message.Chat.Id)).Any((chatMember) => chatMember.User.Id == update.Message.From.Id) ? Level.RuncmdEx(update.Message.Text[1..(update.Message.Text.Length - me.Username.Length - 1)]).Item2 : Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.commandfeedback.notop"]), update.Message.MessageId);
+                                    await Bot.Client.SendMessageAsync(Main.Config.ChatId, Main.Config.InfoThreadId, Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.commandfeedback", (await Bot.Client.GetChatAdministratorsAsync(update.Message.Chat.Id)).Any((chatMember) => chatMember.User.Id == update.Message.From.Id) ? Level.RuncmdEx(update.Message.Text[1..(update.Message.Text.Length - me.Username.Length - 1)]).Item2 : Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.commandfeedback.notop"]), update.Message.MessageId);
                                     return;
                                 case MessageType.Unknown:
                                     outmsg = Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.type.unknown"];
@@ -256,23 +257,20 @@ internal static class EventSystem
                             _prePlayer = default;
                         }, (_, exception, _) =>
                         {
-                            try
+                            switch (exception)
                             {
-                                throw exception;
-                            }
-                            catch (ApiRequestException ex)
-                            {
-                                Main.Logger.Warn.WriteLine(Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("bot.failed.listenstart", ex.Message));
-                            }
-                            catch (RequestException) { }
-                            catch (AggregateException ex)
-                            {
-                                _ = ex.WriteAllException();
-                            }
-                            catch (Exception ex)
-                            {
-                                Main.Logger.Warn.WriteLine(Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("bot.failed.listenstart", ex.Message));
-                                Main.Logger.Debug.WriteLine(ex);
+                                case ApiRequestException ex:
+                                    Main.Logger.Warn.WriteLine(Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("bot.failed.listenstart", ex.Message));
+                                    break;
+                                case RequestException:
+                                    break;
+                                case AggregateException ex:
+                                    ex.WriteAllException();
+                                    break;
+                                default:
+                                    Main.Logger.Warn.WriteLine(Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("bot.failed.listenstart", exception.Message));
+                                    Main.Logger.Debug.WriteLine(exception);
+                                    break;
                             }
                         });
                         break;
@@ -284,7 +282,7 @@ internal static class EventSystem
                     catch (RequestException) { }
                     catch (AggregateException ex)
                     {
-                        _ = ex.WriteAllException();
+                        ex.WriteAllException();
                     }
                     catch (Exception ex)
                     {
@@ -293,25 +291,27 @@ internal static class EventSystem
                     }
                 }
             });
-            if (!string.IsNullOrWhiteSpace(Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.server.start"]))
+            if (string.IsNullOrWhiteSpace(Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.server.start"]))
             {
-                Task task = Main.BotClient.SendMessageAsync(Main.Config.ChatId, Main.Config.InfoThreadId, Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.server.start"]);
-                if (Main.Config.SyncMode)
-                {
-                    task.Wait();
-                }
+                return true;
+            }
+            Task task = Bot.Client.SendMessageAsync(Main.Config.ChatId, Main.Config.InfoThreadId, Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.server.start"]);
+            if (Main.Config.SyncMode)
+            {
+                task.Wait();
             }
             return true;
         };
         ServerStoppedEvent.Event += ev =>
         {
-            if (!string.IsNullOrWhiteSpace(Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.server.stop"]))
+            if (string.IsNullOrWhiteSpace(Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.server.stop"]))
             {
-                Task task = Main.BotClient.SendMessageAsync(Main.Config.ChatId, Main.Config.InfoThreadId, Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.server.stop"]);
-                if (Main.Config.SyncMode)
-                {
-                    task.Wait();
-                }
+                return true;
+            }
+            Task task = Bot.Client.SendMessageAsync(Main.Config.ChatId, Main.Config.InfoThreadId, Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.server.stop"]);
+            if (Main.Config.SyncMode)
+            {
+                task.Wait();
             }
             return true;
         };

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -8,13 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Telegram.Bot" Version="19.0.0" />
+    <ProjectReference Include="..\src\Qiao.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Reference Include="LiteLoader.NET">
       <HintPath>..\SDK\refs\LiteLoader\LiteLoader.NET.dll</HintPath>
-      <Private>false</Private>
     </Reference>
   </ItemGroup>
 

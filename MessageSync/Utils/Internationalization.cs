@@ -1,8 +1,8 @@
-namespace Qiao.Utils;
+namespace MessageSync.Utils;
 
 internal class Internationalization
 {
-    private readonly Dictionary<string, string> _languageData;
+    internal readonly Dictionary<string, string> _languageData;
     private readonly string _name;
     internal Internationalization(Dictionary<string, string> langData, string name = "")
     {

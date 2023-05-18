@@ -1,4 +1,4 @@
-namespace Qiao.Utils;
+namespace MessageSync.Utils;
 
 internal static class FileHelper
 {

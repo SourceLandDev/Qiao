@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace Qiao.Utils;
+namespace MessageSync.Utils;
 internal static class MarkdownHelper
 {
     internal static string Escape(this string input) => new StringBuilder(input).Replace("_", "\\_")
@@ -24,7 +24,7 @@ internal static class MarkdownHelper
                 case 'O':
                     stringBuilder.Remove(index, 2);
                     stringBuilder.Insert(index, "_");
-                    cacheEnding.Insert(0, $"_{((cacheEnding.Length > 1 && cacheEnding[0] is '_' && cacheEnding[1] is '_') ? ' ' : string.Empty)}");
+                    cacheEnding.Insert(0, $"_{(cacheEnding.Length > 1 && cacheEnding[0] is '_' && cacheEnding[1] is '_' ? ' ' : string.Empty)}");
                     break;
                 case 'N':
                     stringBuilder.Remove(index, 2);

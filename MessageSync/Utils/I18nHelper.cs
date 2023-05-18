@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace Qiao.Utils;
+namespace MessageSync.Utils;
 
 internal class I18nHelper
 {
