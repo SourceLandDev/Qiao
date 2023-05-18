@@ -32,8 +32,10 @@ jobs:
     - name: Upload artifacts of Qiao
       uses: actions/upload-artifact@v3
       with:
+        name: Qiao
         path: src/bin/Release/net8.0/publish
     - name: Upload artifacts of MessageSync
       uses: actions/upload-artifact@v3
       with:
-        path: src/bin/Release/MessageSync/net8.0/publish
+        name: MessageSync
+        path: MessageSync/bin/Release/net8.0/publish
