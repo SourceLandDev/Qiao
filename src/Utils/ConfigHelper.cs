@@ -1,11 +1,9 @@
 ﻿using System.Text.Json;
 
 namespace Qiao.Utils;
-internal class ConfigHelper
+internal record ConfigHelper(string Token, string ProxyUrl)
 {
-    public string Token { get; set; }
-    public string ProxyUrl { get; set; }
-    internal ConfigHelper(string path)
+    internal ConfigHelper(string path) : this(default, default)
     {
         string configStr = FileHelper.CheckFile(path, JsonSerializer.Serialize(this));
         ConfigHelper config = JsonSerializer.Deserialize<ConfigHelper>(configStr);
