@@ -4,7 +4,7 @@ using Telegram.Bot.Exceptions;
 namespace Qiao.Utils;
 internal static class BotHelper
 {
-    internal static bool WriteAllException(this AggregateException ex)
+    internal static bool WriteAllException(this AggregateException ex, string message)
     {
         bool rt = false;
         foreach (Exception innerEx in ex.InnerExceptions)
@@ -17,10 +17,10 @@ internal static class BotHelper
                 case RequestException:
                     continue;
                 case AggregateException exception:
-                    rt = exception.WriteAllException() || rt;
+                    rt = exception.WriteAllException(message) || rt;
                     continue;
             }
-            Plugin.Logger.Warn.WriteLine(Plugin.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("bot.failed.messagesend", innerEx.Message));
+            Plugin.Logger.Warn.WriteLine(Plugin.I18nHelper[CultureInfo.CurrentCulture.Name].Translate(message, innerEx.Message));
         }
         return rt;
     }

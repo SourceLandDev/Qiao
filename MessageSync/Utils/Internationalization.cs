@@ -16,7 +16,7 @@ internal class Internationalization
     /// <param name="values">参数</param>
     /// <returns>翻译完成的信息</returns>
     internal string Translate(string key, params object[] values) => !_languageData.TryGetValue(key, out string value)
-            ? throw new KeyNotFoundException($"{key} not find{(string.IsNullOrWhiteSpace(_name) ? string.Empty : $" in ${_name}")}, please check your language file")
+            ? key
             : string.Format(value, values);
     internal string this[string languageCode] => Translate(languageCode);
 }

@@ -20,7 +20,7 @@ internal class I18nHelper
     {
         get => TryGetLanguageData(languageCode, out Internationalization languageData)
                 ? languageData
-                : throw new KeyNotFoundException($"{languageCode} not found, please check your language file");
+                : new Internationalization(new(), languageCode);
         set => AddLanguage(languageCode, value);
     }
 }

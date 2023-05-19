@@ -16,23 +16,47 @@ public class Bot
         {
             Proxy = new WebProxy(Plugin.Config.ProxyUrl, true)
         }));
-        Client.StartReceiving((botClient, update, _) => Received(botClient, update),
-            (_, exception, _) =>
+        Task.Run(() =>
         {
-            switch (exception)
+            while (true)
             {
-                case ApiRequestException ex:
+                try
+                {
+                    Client.StartReceiving((botClient, update, _) => Received(botClient, update),
+                        (_, exception, _) =>
+                        {
+                            switch (exception)
+                            {
+                                case ApiRequestException ex:
+                                    Plugin.Logger.Warn.WriteLine(Plugin.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("bot.failed.listenstart", ex.Message));
+                                    break;
+                                case RequestException:
+                                    break;
+                                case AggregateException ex:
+                                    ex.WriteAllException("bot.failed.listenstart");
+                                    break;
+                                default:
+                                    Plugin.Logger.Warn.WriteLine(Plugin.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("bot.failed.listenstart", exception.Message));
+                                    Plugin.Logger.Debug.WriteLine(exception);
+                                    break;
+                            }
+                        });
+                    break;
+                }
+                catch (ApiRequestException ex)
+                {
                     Plugin.Logger.Warn.WriteLine(Plugin.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("bot.failed.listenstart", ex.Message));
-                    break;
-                case RequestException:
-                    break;
-                case AggregateException ex:
-                    ex.WriteAllException();
-                    break;
-                default:
-                    Plugin.Logger.Warn.WriteLine(Plugin.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("bot.failed.listenstart", exception.Message));
-                    Plugin.Logger.Debug.WriteLine(exception);
-                    break;
+                }
+                catch (RequestException) { }
+                catch (AggregateException ex)
+                {
+                    ex.WriteAllException("bot.failed.listenstart");
+                }
+                catch (Exception ex)
+                {
+                    Plugin.Logger.Warn.WriteLine(Plugin.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("bot.failed.listenstart", ex.Message));
+                    Plugin.Logger.Debug.WriteLine(ex);
+                }
             }
         });
     }

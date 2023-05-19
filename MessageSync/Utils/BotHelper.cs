@@ -23,7 +23,7 @@ internal static class BotHelper
             catch (RequestException) { }
             catch (AggregateException ex)
             {
-                if (ex.WriteAllException())
+                if (ex.WriteAllException("bot.failed.messagesend"))
                 {
                     break;
                 }
@@ -35,7 +35,7 @@ internal static class BotHelper
             }
         }
     }
-    internal static bool WriteAllException(this AggregateException ex)
+    internal static bool WriteAllException(this AggregateException ex, string message)
     {
         bool rt = false;
         foreach (Exception innerEx in ex.InnerExceptions)
@@ -48,10 +48,10 @@ internal static class BotHelper
                 case RequestException:
                     continue;
                 case AggregateException exception:
-                    rt = exception.WriteAllException() || rt;
+                    rt = exception.WriteAllException(message) || rt;
                     continue;
             }
-            Main.Logger.Warn.WriteLine(Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("bot.failed.messagesend", innerEx.Message));
+            Main.Logger.Warn.WriteLine(Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate(message, innerEx.Message));
         }
         return rt;
     }
