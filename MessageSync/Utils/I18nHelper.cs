@@ -18,9 +18,16 @@ internal class I18nHelper
     internal void AddLanguage(string languageCode, Internationalization languageData) => _language[languageCode] = languageData;
     internal Internationalization this[string languageCode]
     {
-        get => TryGetLanguageData(languageCode, out Internationalization languageData)
-                ? languageData
-                : new Internationalization(new(), languageCode);
+        get
+        {
+            if (TryGetLanguageData(languageCode, out Internationalization languageData))
+            {
+                return languageData;
+            }
+            Internationalization data = new(new(), languageCode);
+            _language[languageCode] = data;
+            return data;
+        }
         set => AddLanguage(languageCode, value);
     }
 }

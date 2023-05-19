@@ -1,4 +1,3 @@
 {
-    "bot.failed.messagesend": "消息发送失败：{0}",
     "bot.failed.listenstart": "消息监听失败：{0}"
 }
