@@ -5,13 +5,13 @@ namespace MessageSync.Utils;
 internal class ConfigHelper
 {
     [JsonPropertyName("chat_id")]
-    internal long ChatId { get; private set; }
+    public long ChatId { get; set; }
     [JsonPropertyName("message_thread_id")]
-    internal int MessageThreadId { get; private set; }
+    public int MessageThreadId { get; set; }
     [JsonPropertyName("info_thread_id")]
-    internal int InfoThreadId { get; private set; }
+    public int InfoThreadId { get; set; }
     [JsonPropertyName("sync_mode")]
-    internal bool SyncMode { get; private set; }
+    public bool SyncMode { get; set; }
     internal ConfigHelper(string path)
     {
         string configStr = FileHelper.CheckFile(path, JsonSerializer.Serialize(this));

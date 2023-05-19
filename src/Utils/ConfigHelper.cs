@@ -3,8 +3,8 @@
 namespace Qiao.Utils;
 internal class ConfigHelper
 {
-    internal string Token { get; private set; }
-    internal string ProxyUrl { get; private set; }
+    public string Token { get; set; }
+    public string ProxyUrl { get; set; }
     internal ConfigHelper(string path)
     {
         string configStr = FileHelper.CheckFile(path, JsonSerializer.Serialize(this));
