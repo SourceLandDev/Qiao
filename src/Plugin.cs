@@ -1,3 +1,4 @@
+using LiteLoader.Event;
 using LiteLoader.Logger;
 using LiteLoader.NET;
 using Qiao.Utils;
@@ -23,6 +24,10 @@ public class Plugin : IPluginInitializer
 
         I18nHelper = new I18nHelper(Path.Combine(path, "languagePack"));
 
-        Bot.Initialize();
+        ServerStartedEvent.Event += (_) =>
+        {
+            Bot.Initialize();
+            return default;
+        };
     }
 }
