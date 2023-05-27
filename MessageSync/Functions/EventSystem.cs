@@ -246,7 +246,7 @@ internal static class EventSystem
             outmsg = Main.EmojiHelper[CultureInfo.CurrentCulture.Name]._languageData.Aggregate(outmsg, (current, emoji) => current.Replace(emoji.Key, emoji.Value));
             Level.BroadcastText(update.Message.ReplyToMessage is null ?
                 Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.toserver", update.Message.Date.AddHours(TimeZoneInfo.Local.BaseUtcOffset.Hours), update.Message.SenderChat == null ? update.Message.From.FirstName + update.Message.From.LastName : update.Message.SenderChat.Title, outmsg) :
-                Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.toserver.reply", update.Message.Date.AddHours(TimeZoneInfo.Local.BaseUtcOffset.Hours), update.Message.SenderChat == null ? update.Message.From.FirstName + update.Message.From.LastName : update.Message.SenderChat.Title, update.Message.ReplyToMessage.SenderChat == null ? update.Message.ReplyToMessage.From.FirstName + update.Message.ReplyToMessage.From.LastName : update.Message.ReplyToMessage.SenderChat.Title, outmsg), TextType.RAW);
+                Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.toserver.reply", update.Message.Date.AddHours(TimeZoneInfo.Local.BaseUtcOffset.Hours), update.Message.SenderChat == null ? update.Message.From.FirstName + update.Message.From.LastName : update.Message.SenderChat.Title, update.Message.ReplyToMessage.SenderChat == null ? update.Message.ReplyToMessage.From.FirstName + update.Message.ReplyToMessage.From.LastName : update.Message.ReplyToMessage.SenderChat.Title, outmsg), TextType.Raw);
             _prePlayer = default;
         };
         ServerStartedEvent.Event += ev =>
