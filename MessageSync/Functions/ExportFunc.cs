@@ -7,9 +7,10 @@ internal static class ExportFunc
 {
     internal static void Setup()
     {
-        RemoteCallAPI.ExportAs(Main.pluginName, "SendMessage", (string message) =>
+        RemoteCallAPI.ExportFunc(Main.pluginName, "SendMessage", (List<Valuetype> message) =>
         {
-            _ = Bot.Client.SendMessageAsync(Main.Config.ChatId, Main.Config.MessageThreadId, message);
+            _ = Bot.Client.SendMessageAsync(Main.Config.ChatId, Main.Config.MessageThreadId, message[0]);
+            return new Valuetype();
         });
     }
 }

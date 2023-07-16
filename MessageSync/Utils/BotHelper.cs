@@ -15,6 +15,7 @@ internal static class BotHelper
                 await botClient.SendTextMessageAsync(chatId, message, messageThreadId: (await botClient.GetChatAsync(chatId)).IsForum ?? false ? messageThreadId : default, parseMode: ParseMode.MarkdownV2, replyToMessageId: reply);
                 break;
             }
+            catch (ApiRequestException ex) when (ex.Message.Contains("Too Many Requests")) { }
             catch (ApiRequestException ex)
             {
                 Main.Logger.Warn.WriteLine(Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("bot.failed.messagesend", ex.Message));

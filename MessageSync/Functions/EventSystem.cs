@@ -16,7 +16,7 @@ internal static class EventSystem
     {
         PlayerChatEvent.Event += ev =>
         {
-            _ = Bot.Client.SendMessageAsync(Main.Config.ChatId, Main.Config.MessageThreadId, Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate(ev.Player.Xuid == _prePlayer ? "message.tochat.repeat" : "message.tochat", ev.Player.RealName, ev.Message.Escape().Format()));
+            _ = Bot.Client.SendMessageAsync(Main.Config.ChatId, Main.Config.MessageThreadId, Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate(ev.Player.Xuid == _prePlayer ? "message.tochat.repeat" : "message.tochat", APIHelper.GetUserName(ev.Player), ev.Message.Escape().Format()));
             _prePlayer = ev.Player.Xuid;
             return true;
         };
@@ -26,7 +26,7 @@ internal static class EventSystem
             {
                 _prePlayer = default;
             }
-            _ = Bot.Client.SendMessageAsync(Main.Config.ChatId, Main.Config.InfoThreadId, Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.connected", ev.Player.RealName, GlobalService.Level.ActivePlayerCount));
+            _ = Bot.Client.SendMessageAsync(Main.Config.ChatId, Main.Config.InfoThreadId, Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.connected", APIHelper.GetUserName(ev.Player), GlobalService.Level.ActivePlayerCount));
             return true;
         };
         PlayerLeftEvent.Event += ev =>
@@ -35,7 +35,7 @@ internal static class EventSystem
             {
                 _prePlayer = default;
             }
-            _ = Bot.Client.SendMessageAsync(Main.Config.ChatId, Main.Config.InfoThreadId, Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.disconnected", ev.Player.RealName, GlobalService.Level.ActivePlayerCount - 1));
+            _ = Bot.Client.SendMessageAsync(Main.Config.ChatId, Main.Config.InfoThreadId, Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.disconnected", APIHelper.GetUserName(ev.Player), GlobalService.Level.ActivePlayerCount - 1));
             return true;
         };
         PlayerDieEvent.Event += ev =>
@@ -44,7 +44,7 @@ internal static class EventSystem
             {
                 _prePlayer = default;
             }
-            _ = Bot.Client.SendMessageAsync(Main.Config.ChatId, Main.Config.InfoThreadId, Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.dead", ev.Player.RealName, ev.DamageSource.Cause switch
+            _ = Bot.Client.SendMessageAsync(Main.Config.ChatId, Main.Config.InfoThreadId, Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.dead", APIHelper.GetUserName(ev.Player), ev.DamageSource.Cause switch
             {
                 ActorDamageCause.Override => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.override"],
                 ActorDamageCause.Contact => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.contact"],
@@ -76,8 +76,8 @@ internal static class EventSystem
                 ActorDamageCause.Freezing => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.freezing"],
                 ActorDamageCause.Stalactite => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.stalactite"],
                 ActorDamageCause.Stalagmite => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.stalagmite"],
-                ActorDamageCause.All => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.sonicBoom"],
-                _ => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.none"],
+                ActorDamageCause.SonicBoom => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.sonicBoom"],
+                _ => Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.dead.cause.unknown", ev.DamageSource.Cause),
             }));
             return true;
         };
@@ -246,7 +246,7 @@ internal static class EventSystem
             outmsg = Main.EmojiHelper[CultureInfo.CurrentCulture.Name]._languageData.Aggregate(outmsg, (current, emoji) => current.Replace(emoji.Key, emoji.Value));
             Level.BroadcastText(update.Message.ReplyToMessage is null || (update.Message.IsTopicMessage ?? false) && update.Message.MessageThreadId == update.Message.ReplyToMessage.MessageId ?
                 Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.toserver", update.Message.Date.AddHours(TimeZoneInfo.Local.BaseUtcOffset.Hours), update.Message.SenderChat == null ? update.Message.From.FirstName + update.Message.From.LastName : update.Message.SenderChat.Title, outmsg) :
-                Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.toserver.reply", update.Message.Date.AddHours(TimeZoneInfo.Local.BaseUtcOffset.Hours), update.Message.SenderChat == null ? update.Message.From.FirstName + update.Message.From.LastName : update.Message.SenderChat.Title, update.Message.ReplyToMessage.SenderChat == null ? update.Message.ReplyToMessage.From.FirstName + update.Message.ReplyToMessage.From.LastName : update.Message.ReplyToMessage.SenderChat.Title, outmsg), TextType.Raw);
+                Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.toserver.reply", update.Message.Date.AddHours(TimeZoneInfo.Local.BaseUtcOffset.Hours), update.Message.SenderChat == null ? update.Message.From.FirstName + update.Message.From.LastName : update.Message.SenderChat.Title, update.Message.ReplyToMessage.SenderChat == null ? update.Message.ReplyToMessage.From.Id == Bot.Client.BotId ? string.Empty : update.Message.ReplyToMessage.From.FirstName + update.Message.ReplyToMessage.From.LastName : update.Message.ReplyToMessage.SenderChat.Title, outmsg), TextType.Raw);
             _prePlayer = default;
         };
         ServerStartedEvent.Event += ev =>
