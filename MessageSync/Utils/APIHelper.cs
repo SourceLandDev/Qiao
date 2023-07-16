@@ -11,7 +11,7 @@ internal static class APIHelper
         {
             return player.RealName;
         }
-        Func<string, string> method = RemoteCallAPI.ImportAs<Func<string, string>>("UserName", "GetFromXuid");
-        return method(player.Xuid);
+        RemoteCallAPI.CallbackFn method = RemoteCallAPI.ImportFunc("UserName", "GetFromXuid");
+        return method(new() { player.Xuid });
     }
 }
