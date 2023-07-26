@@ -14,6 +14,7 @@ internal static class APIHelper
             RemoteCallAPI.CallbackFn method = RemoteCallAPI.ImportFunc("UserName", "Get");
             name = method(new() { player });
         }
-        return Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.name.player", name);
+
+        return Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.name.player", name.Escape());
     }
 }

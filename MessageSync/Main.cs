@@ -5,6 +5,7 @@ using MessageSync.Utils;
 using System.Reflection;
 
 namespace MessageSync;
+
 [PluginMain(pluginName)]
 public class Main : IPluginInitializer
 {
@@ -16,6 +17,7 @@ public class Main : IPluginInitializer
     internal static I18nHelper I18nHelper;
     internal static I18nHelper EmojiHelper;
     internal static ConfigHelper Config;
+
     public void OnInitialize()
     {
         string path = Path.Combine("plugins", pluginName);

@@ -6,16 +6,20 @@ using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
 
 namespace Qiao;
+
 public class Bot
 {
     public static TelegramBotClient Client { get; private set; }
     public static event EventHandler<Update> Received;
+
     internal static void Initialize()
     {
-        Client = new(Plugin.Config.Token, string.IsNullOrWhiteSpace(Plugin.Config.ProxyUrl) ? default : new(new HttpClientHandler
-        {
-            Proxy = new WebProxy(Plugin.Config.ProxyUrl, true)
-        }));
+        Client = new(Plugin.Config.Token, string.IsNullOrWhiteSpace(Plugin.Config.ProxyUrl)
+            ? default
+            : new(new HttpClientHandler
+            {
+                Proxy = new WebProxy(Plugin.Config.ProxyUrl, true)
+            }));
         Task.Run(() =>
         {
             while (true)
@@ -28,7 +32,8 @@ public class Bot
                             switch (exception)
                             {
                                 case ApiRequestException ex:
-                                    Plugin.Logger.Warn.WriteLine(Plugin.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("bot.failed.listenstart", ex.Message));
+                                    Plugin.Logger.Warn.WriteLine(Plugin.I18nHelper[CultureInfo.CurrentCulture.Name]
+                                        .Translate("bot.failed.listenstart", ex.Message));
                                     break;
                                 case RequestException:
                                     break;
@@ -36,7 +41,8 @@ public class Bot
                                     ex.WriteAllException("bot.failed.listenstart");
                                     break;
                                 default:
-                                    Plugin.Logger.Warn.WriteLine(Plugin.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("bot.failed.listenstart", exception.Message));
+                                    Plugin.Logger.Warn.WriteLine(Plugin.I18nHelper[CultureInfo.CurrentCulture.Name]
+                                        .Translate("bot.failed.listenstart", exception.Message));
                                     Plugin.Logger.Debug.WriteLine(exception);
                                     break;
                             }
@@ -45,16 +51,20 @@ public class Bot
                 }
                 catch (ApiRequestException ex)
                 {
-                    Plugin.Logger.Warn.WriteLine(Plugin.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("bot.failed.listenstart", ex.Message));
+                    Plugin.Logger.Warn.WriteLine(Plugin.I18nHelper[CultureInfo.CurrentCulture.Name]
+                        .Translate("bot.failed.listenstart", ex.Message));
                 }
-                catch (RequestException) { }
+                catch (RequestException)
+                {
+                }
                 catch (AggregateException ex)
                 {
                     ex.WriteAllException("bot.failed.listenstart");
                 }
                 catch (Exception ex)
                 {
-                    Plugin.Logger.Warn.WriteLine(Plugin.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("bot.failed.listenstart", ex.Message));
+                    Plugin.Logger.Warn.WriteLine(Plugin.I18nHelper[CultureInfo.CurrentCulture.Name]
+                        .Translate("bot.failed.listenstart", ex.Message));
                     Plugin.Logger.Debug.WriteLine(ex);
                 }
             }

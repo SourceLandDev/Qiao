@@ -5,6 +5,7 @@ using Qiao.Utils;
 using System.Reflection;
 
 namespace Qiao;
+
 [PluginMain(pluginName)]
 public class Plugin : IPluginInitializer
 {
@@ -15,6 +16,7 @@ public class Plugin : IPluginInitializer
     internal static Logger Logger = new(pluginName);
     internal static I18nHelper I18nHelper;
     internal static ConfigHelper Config;
+
     public void OnInitialize()
     {
         string path = Path.Combine("plugins", pluginName);

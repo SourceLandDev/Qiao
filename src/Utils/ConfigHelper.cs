@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 
 namespace Qiao.Utils;
+
 internal record ConfigHelper(string Token, string ProxyUrl)
 {
     internal ConfigHelper(string path) : this(default, default)

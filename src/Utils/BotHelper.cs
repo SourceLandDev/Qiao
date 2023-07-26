@@ -2,6 +2,7 @@ using System.Globalization;
 using Telegram.Bot.Exceptions;
 
 namespace Qiao.Utils;
+
 internal static class BotHelper
 {
     internal static bool WriteAllException(this AggregateException ex, string message)
@@ -20,8 +21,11 @@ internal static class BotHelper
                     rt = exception.WriteAllException(message) || rt;
                     continue;
             }
-            Plugin.Logger.Warn.WriteLine(Plugin.I18nHelper[CultureInfo.CurrentCulture.Name].Translate(message, innerEx.Message));
+
+            Plugin.Logger.Warn.WriteLine(Plugin.I18nHelper[CultureInfo.CurrentCulture.Name]
+                .Translate(message, innerEx.Message));
         }
+
         return rt;
     }
 }

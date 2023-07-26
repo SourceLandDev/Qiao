@@ -10,12 +10,20 @@ internal class I18nHelper
         string defaultValue = JsonSerializer.Serialize(new Dictionary<string, string>());
         foreach (FileInfo file in langFileDir.GetFiles("*.json"))
         {
-            this[Path.GetFileNameWithoutExtension(file.Name)] = new(JsonSerializer.Deserialize<Dictionary<string, string>>(FileHelper.CheckFile(file.FullName, defaultValue)));
+            this[Path.GetFileNameWithoutExtension(file.Name)] = new(
+                JsonSerializer.Deserialize<Dictionary<string, string>>(
+                    FileHelper.CheckFile(file.FullName, defaultValue)));
         }
     }
+
     private readonly Dictionary<string, Internationalization> _language = new();
-    internal bool TryGetLanguageData(string languageCode, out Internationalization languageData) => _language.TryGetValue(languageCode, out languageData);
-    internal void AddLanguage(string languageCode, Internationalization languageData) => _language[languageCode] = languageData;
+
+    internal bool TryGetLanguageData(string languageCode, out Internationalization languageData) =>
+        _language.TryGetValue(languageCode, out languageData);
+
+    internal void AddLanguage(string languageCode, Internationalization languageData) =>
+        _language[languageCode] = languageData;
+
     internal Internationalization this[string languageCode]
     {
         get
@@ -24,6 +32,7 @@ internal class I18nHelper
             {
                 return languageData;
             }
+
             Internationalization data = new(new(), languageCode);
             _language[languageCode] = data;
             return data;

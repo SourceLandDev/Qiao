@@ -14,8 +14,10 @@ internal static class FileHelper
         {
             info.Create();
         }
+
         return info;
     }
+
     /// <summary>
     /// 读取文件全部文字，不存在时自动创建
     /// </summary>
@@ -28,6 +30,7 @@ internal static class FileHelper
         {
             return File.ReadAllText(path);
         }
+
         File.WriteAllText(path, defaultValue);
         return defaultValue;
     }

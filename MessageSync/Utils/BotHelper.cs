@@ -5,23 +5,33 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
 namespace MessageSync.Utils;
+
 internal static class BotHelper
 {
-    internal static async Task<Message> SendMessageAsync(this ITelegramBotClient botClient, long chatId, int messageThreadId, string message, int? reply = default)
+    internal static async Task<Message> SendMessageAsync(this ITelegramBotClient botClient, long chatId,
+        int messageThreadId, string message, int? reply = default)
     {
         while (true)
         {
             try
             {
-                return await botClient.SendTextMessageAsync(chatId, message, messageThreadId: (await botClient.GetChatAsync(chatId)).IsForum ?? false ? messageThreadId : default, parseMode: ParseMode.MarkdownV2, replyToMessageId: reply);
+                return await botClient.SendTextMessageAsync(chatId, message,
+                    messageThreadId: (await botClient.GetChatAsync(chatId)).IsForum ?? false
+                        ? messageThreadId
+                        : default, parseMode: ParseMode.MarkdownV2, replyToMessageId: reply);
             }
-            catch (ApiRequestException ex) when (ex.Message.Contains("Too Many Requests")) { }
+            catch (ApiRequestException ex) when (ex.Message.Contains("Too Many Requests"))
+            {
+            }
             catch (ApiRequestException ex)
             {
-                Main.Logger.Warn.WriteLine(Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("bot.failed.messagesend", ex.Message));
+                Main.Logger.Warn.WriteLine(Main.I18nHelper[CultureInfo.CurrentCulture.Name]
+                    .Translate("bot.failed.messagesend", ex.Message));
                 break;
             }
-            catch (RequestException) { }
+            catch (RequestException)
+            {
+            }
             catch (AggregateException ex)
             {
                 if (ex.WriteAllException("bot.failed.messagesend"))
@@ -31,12 +41,15 @@ internal static class BotHelper
             }
             catch (Exception ex)
             {
-                Main.Logger.Warn.WriteLine(Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("bot.failed.messagesend", ex.Message));
+                Main.Logger.Warn.WriteLine(Main.I18nHelper[CultureInfo.CurrentCulture.Name]
+                    .Translate("bot.failed.messagesend", ex.Message));
                 Main.Logger.Debug.WriteLine(ex);
             }
         }
+
         return default;
     }
+
     internal static bool WriteAllException(this AggregateException ex, string message)
     {
         bool rt = false;
@@ -53,8 +66,11 @@ internal static class BotHelper
                     rt = exception.WriteAllException(message) || rt;
                     continue;
             }
-            Main.Logger.Warn.WriteLine(Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate(message, innerEx.Message));
+
+            Main.Logger.Warn.WriteLine(Main.I18nHelper[CultureInfo.CurrentCulture.Name]
+                .Translate(message, innerEx.Message));
         }
+
         return rt;
     }
 }

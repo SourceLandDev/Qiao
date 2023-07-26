@@ -3,10 +3,14 @@ using System.Text.Json.Serialization;
 
 namespace MessageSync.Utils;
 
-internal record ConfigHelper([property: JsonPropertyName("chat_id")] long ChatId,
-                             [property: JsonPropertyName("message_thread_id")] int MessageThreadId,
-                             [property: JsonPropertyName("info_thread_id")] int InfoThreadId,
-                             [property: JsonPropertyName("sync_mode")] bool SyncMode)
+internal record ConfigHelper([property: JsonPropertyName("chat_id")]
+    long ChatId,
+    [property: JsonPropertyName("message_thread_id")]
+    int MessageThreadId,
+    [property: JsonPropertyName("info_thread_id")]
+    int InfoThreadId,
+    [property: JsonPropertyName("sync_mode")]
+    bool SyncMode)
 {
     internal ConfigHelper(string path) : this(default, default, default, default)
     {
