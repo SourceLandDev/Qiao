@@ -1,4 +1,5 @@
-﻿using LiteLoader.RemoteCall;
+﻿using System.Globalization;
+using LiteLoader.RemoteCall;
 using MC;
 
 namespace MessageSync.Utils;
@@ -7,11 +8,12 @@ internal static class APIHelper
 {
     public static string GetUserName(Player player)
     {
-        if (!RemoteCallAPI.HasFunc("UserName", "Get"))
+        string name = player.RealName;
+        if (RemoteCallAPI.HasFunc("UserName", "Get"))
         {
-            return player.RealName;
+            RemoteCallAPI.CallbackFn method = RemoteCallAPI.ImportFunc("UserName", "Get");
+            name = method(new() { player });
         }
-        RemoteCallAPI.CallbackFn method = RemoteCallAPI.ImportFunc("UserName", "Get");
-        return method(new() { player });
+        return Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.name.player", name);
     }
 }

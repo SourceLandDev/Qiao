@@ -4,6 +4,7 @@ using MC;
 using MessageSync.Utils;
 using Qiao;
 using System.Globalization;
+using System.Xml.Linq;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
@@ -48,8 +49,8 @@ internal static class EventSystem
             {
                 ActorDamageCause.Override => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.override"],
                 ActorDamageCause.Contact => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.contact"],
-                ActorDamageCause.EntityAttack => Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.dead.cause.entityattack", (ev.DamageSource.Entity.IsPlayer ? new Player(ev.DamageSource.Entity.Intptr).RealName : (string.IsNullOrWhiteSpace(ev.DamageSource.Entity.NameTag) ? I18n.Get(ev.DamageSource.Entity.EntityLocName) : ev.DamageSource.Entity.NameTag)).Escape()),
-                ActorDamageCause.Projectile => Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.dead.cause.projectile", (ev.DamageSource.Entity.Owner.IsPlayer ? ev.DamageSource.Entity.PlayerOwner.RealName : (string.IsNullOrWhiteSpace(ev.DamageSource.Entity.Owner.NameTag) ? I18n.Get(ev.DamageSource.Entity.Owner.EntityLocName) : ev.DamageSource.Entity.Owner.NameTag)).Escape()),
+                ActorDamageCause.EntityAttack => Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.dead.cause.entityattack", (ev.DamageSource.Entity.IsPlayer ? APIHelper.GetUserName(new(ev.DamageSource.Entity.Intptr)) : Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.name.mob", string.IsNullOrWhiteSpace(ev.DamageSource.Entity.NameTag) ? I18n.Get(ev.DamageSource.Entity.EntityLocName) : ev.DamageSource.Entity.NameTag)).Escape()),
+                ActorDamageCause.Projectile => Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.dead.cause.projectile", (ev.DamageSource.Entity.Owner.IsPlayer ? APIHelper.GetUserName(ev.DamageSource.Entity.PlayerOwner) : Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.name.mob", string.IsNullOrWhiteSpace(ev.DamageSource.Entity.Owner.NameTag) ? I18n.Get(ev.DamageSource.Entity.Owner.EntityLocName) : ev.DamageSource.Entity.Owner.NameTag)).Escape()),
                 ActorDamageCause.Suffocation => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.suffocation"],
                 ActorDamageCause.Fall => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.fall"],
                 ActorDamageCause.Fire => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.fire"],
@@ -57,10 +58,10 @@ internal static class EventSystem
                 ActorDamageCause.Lava => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.lava"],
                 ActorDamageCause.Drowning => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.drowning"],
                 ActorDamageCause.BlockExplosion => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.blockexplosion"],
-                ActorDamageCause.EntityExplosion => Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.dead.cause.entityexplosion", (ev.DamageSource.Entity.IsPlayer ? new Player(ev.DamageSource.Entity.Intptr).RealName : (string.IsNullOrWhiteSpace(ev.DamageSource.Entity.NameTag) ? I18n.Get(ev.DamageSource.Entity.EntityLocName) : ev.DamageSource.Entity.NameTag)).Escape()),
+                ActorDamageCause.EntityExplosion => Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.dead.cause.entityexplosion", (ev.DamageSource.Entity.IsPlayer ? APIHelper.GetUserName(new(ev.DamageSource.Entity.Intptr)) : Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.name.mob", string.IsNullOrWhiteSpace(ev.DamageSource.Entity.NameTag) ? I18n.Get(ev.DamageSource.Entity.EntityLocName) : ev.DamageSource.Entity.NameTag)).Escape()),
                 ActorDamageCause.Void => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.void"],
                 ActorDamageCause.Suicide => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.suicide"],
-                ActorDamageCause.Magic => Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.dead.cause.magic", (ev.DamageSource.Entity.IsPlayer ? new Player(ev.DamageSource.Entity.Intptr).RealName : (string.IsNullOrWhiteSpace(ev.DamageSource.Entity.NameTag) ? I18n.Get(ev.DamageSource.Entity.EntityLocName) : ev.DamageSource.Entity.NameTag)).Escape()),
+                ActorDamageCause.Magic => Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.dead.cause.magic", (ev.DamageSource.Entity.IsPlayer ? APIHelper.GetUserName(new(ev.DamageSource.Entity.Intptr)) : Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.name.mob", string.IsNullOrWhiteSpace(ev.DamageSource.Entity.NameTag) ? I18n.Get(ev.DamageSource.Entity.EntityLocName) : ev.DamageSource.Entity.NameTag)).Escape()),
                 ActorDamageCause.Wither => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.wither"],
                 ActorDamageCause.Starve => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.starve"],
                 ActorDamageCause.Anvil => Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.dead.cause.anvil"],
