@@ -19,10 +19,16 @@ internal static class EventSystem
     {
         PlayerChatEvent.Event += ev =>
         {
+            string message = ev.Message.Escape().Format();
+            if (string.IsNullOrWhiteSpace(message))
+            {
+                return true;
+            }
+
             _ = Bot.Client.SendMessageAsync(Main.Config.ChatId, Main.Config.MessageThreadId,
                 Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate(
                     ev.Player.Xuid == _prePlayer ? "message.tochat.repeat" : "message.tochat",
-                    APIHelper.GetUserName(ev.Player), ev.Message.Escape().Format()));
+                    APIHelper.GetUserName(ev.Player), message));
             _prePlayer = ev.Player.Xuid;
             return true;
         };
