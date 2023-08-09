@@ -88,5 +88,5 @@
   "message.type.generalforumtopicunhidden": "§o显示通用话题",
   "message.type.writeaccessallowed": "§o允许写访问",
   "message.type.unsupportedtype": "§o未支持的消息类型",
-  "bot.failed.messagesend": "消息发送失败：{0}"
+  "bot.failed.messagesend": "消息发送失败：{0} 原文：{1}"
 }
