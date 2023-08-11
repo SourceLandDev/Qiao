@@ -1,14 +1,51 @@
+using System.Collections.Concurrent;
 using System.Globalization;
+using Qiao;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
-using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
 namespace MessageSync.Utils;
 
+internal record class Message(long ChatId, int MessageThreadId, string Text, int? Reply = default);
+
 internal static class BotHelper
 {
-    internal static async Task<Message> SendMessageAsync(this ITelegramBotClient botClient, long chatId,
+    private static readonly ConcurrentQueue<Message> ts_messages;
+
+    private static readonly AutoResetEvent s_resetEvent;
+
+    static BotHelper()
+    {
+        ts_messages = new();
+        s_resetEvent = new(false);
+        Thread thread = new(async () =>
+        {
+            while (true)
+            {
+                if (!ts_messages.TryDequeue(out Message message))
+                {
+                    s_resetEvent.WaitOne();
+                    return;
+                }
+                await Bot.Client.SendMessageAsync(message.ChatId, message.MessageThreadId, message.Text, message.Reply);
+            }
+        })
+        {
+            IsBackground = true,
+            Priority = ThreadPriority.BelowNormal
+        };
+        thread.Start();
+    }
+
+    public static void Enqueue(this ITelegramBotClient _, long chatId,
+        int messageThreadId, string message, int? reply = default)
+    {
+        ts_messages.Enqueue(new(chatId, messageThreadId, message, reply));
+        s_resetEvent.Set();
+    }
+
+    public static async Task<Telegram.Bot.Types.Message> SendMessageAsync(this ITelegramBotClient botClient, long chatId,
         int messageThreadId, string message, int? reply = default)
     {
         while (true)
@@ -50,7 +87,7 @@ internal static class BotHelper
         return default;
     }
 
-    internal static bool WriteAllException(this AggregateException ex, string message, params string[] args)
+    public static bool WriteAllException(this AggregateException ex, string message, params string[] args)
     {
         bool rt = false;
         foreach (Exception innerEx in ex.InnerExceptions)

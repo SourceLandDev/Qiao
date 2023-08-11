@@ -25,7 +25,7 @@ internal static class EventSystem
                 return true;
             }
 
-            _ = Bot.Client.SendMessageAsync(Main.Config.ChatId, Main.Config.MessageThreadId,
+            Bot.Client.Enqueue(Main.Config.ChatId, Main.Config.MessageThreadId,
                 Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate(
                     ev.Player.Xuid == _prePlayer ? "message.tochat.repeat" : "message.tochat",
                     APIHelper.GetUserName(ev.Player), message));
@@ -39,7 +39,7 @@ internal static class EventSystem
                 _prePlayer = default;
             }
 
-            _ = Bot.Client.SendMessageAsync(Main.Config.ChatId, Main.Config.InfoThreadId,
+            Bot.Client.Enqueue(Main.Config.ChatId, Main.Config.InfoThreadId,
                 Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.connected",
                     APIHelper.GetUserName(ev.Player), GlobalService.Level.ActivePlayerCount));
             return true;
@@ -51,7 +51,7 @@ internal static class EventSystem
                 _prePlayer = default;
             }
 
-            _ = Bot.Client.SendMessageAsync(Main.Config.ChatId, Main.Config.InfoThreadId,
+            Bot.Client.Enqueue(Main.Config.ChatId, Main.Config.InfoThreadId,
                 Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.disconnected",
                     APIHelper.GetUserName(ev.Player), GlobalService.Level.ActivePlayerCount - 1));
             return true;
@@ -63,7 +63,7 @@ internal static class EventSystem
                 _prePlayer = default;
             }
 
-            _ = Bot.Client.SendMessageAsync(Main.Config.ChatId, Main.Config.InfoThreadId, Main
+            Bot.Client.Enqueue(Main.Config.ChatId, Main.Config.InfoThreadId, Main
                 .I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.dead", APIHelper.GetUserName(ev.Player),
                     ev.DamageSource.Cause switch
                     {
@@ -185,7 +185,7 @@ internal static class EventSystem
                         return;
                     }
 
-                    await Bot.Client.SendMessageAsync(Main.Config.ChatId, Main.Config.InfoThreadId,
+                    Bot.Client.Enqueue(Main.Config.ChatId, Main.Config.InfoThreadId,
                         Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.commandfeedback",
                             (await Bot.Client.GetChatAdministratorsAsync(update.Message.Chat.Id)).Any((chatMember) =>
                                 chatMember.User.Id == update.Message.From.Id)
@@ -386,13 +386,15 @@ internal static class EventSystem
                 return true;
             }
 
-            Task task = Bot.Client.SendMessageAsync(Main.Config.ChatId, Main.Config.InfoThreadId,
-                Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.server.start"]);
             if (Main.Config.SyncMode)
             {
-                task.Wait();
+                Bot.Client.SendMessageAsync(Main.Config.ChatId, Main.Config.InfoThreadId,
+                    Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.server.start"]).Wait();
+                return true;
             }
 
+            Bot.Client.Enqueue(Main.Config.ChatId, Main.Config.InfoThreadId,
+                Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.server.start"]);
             return true;
         };
         ServerStoppedEvent.Event += ev =>
@@ -402,13 +404,15 @@ internal static class EventSystem
                 return true;
             }
 
-            Task task = Bot.Client.SendMessageAsync(Main.Config.ChatId, Main.Config.InfoThreadId,
-                Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.server.stop"]);
             if (Main.Config.SyncMode)
             {
-                task.Wait();
+                Bot.Client.SendMessageAsync(Main.Config.ChatId, Main.Config.InfoThreadId,
+                    Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.server.stop"]).Wait();
+                return true;
             }
 
+            Bot.Client.Enqueue(Main.Config.ChatId, Main.Config.InfoThreadId,
+                Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.server.stop"]);
             return true;
         };
     }

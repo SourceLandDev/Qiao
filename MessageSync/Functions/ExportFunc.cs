@@ -1,7 +1,6 @@
 using LiteLoader.RemoteCall;
 using MessageSync.Utils;
 using Qiao;
-using Telegram.Bot.Types;
 
 namespace MessageSync.Functions;
 
@@ -11,7 +10,7 @@ internal static class ExportFunc
     {
         RemoteCallAPI.ExportFunc(Main.pluginName, "SendMessage", (List<Valuetype> args) =>
         {
-            Message message = Bot.Client.SendMessageAsync(Main.Config.ChatId, args.Count > 1
+            Telegram.Bot.Types.Message message = Bot.Client.SendMessageAsync(Main.Config.ChatId, args.Count > 1
                 ? (int)args[1] switch
                 {
                     -2 => Main.Config.InfoThreadId,
