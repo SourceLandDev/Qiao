@@ -23,12 +23,15 @@ internal static class BotHelper
         {
             while (true)
             {
-                if (!ts_messages.TryDequeue(out Message message))
+                if (Bot.Client is null)
                 {
-                    s_resetEvent.WaitOne();
-                    return;
+                    continue;
                 }
-                await Bot.Client.SendMessageAsync(message.ChatId, message.MessageThreadId, message.Text, message.Reply);
+                while (ts_messages.TryDequeue(out Message message))
+                {
+                    await Bot.Client.SendMessageAsync(message.ChatId, message.MessageThreadId, message.Text, message.Reply);
+                }
+                s_resetEvent.WaitOne();
             }
         })
         {
