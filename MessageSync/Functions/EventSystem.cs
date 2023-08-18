@@ -82,7 +82,7 @@ internal static class EventSystem
                         return;
                     }
 
-                    Bot.Client.Enqueue(Main.Config.ChatId, Main.Config.InfoThreadId,
+                    Bot.Client.Enqueue(Main.Config.ChatId, update.Message.MessageThreadId ?? Main.Config.InfoThreadId,
                         Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.commandfeedback",
                             (await Bot.Client.GetChatAdministratorsAsync(update.Message.Chat.Id)).Any((chatMember) =>
                                 chatMember.User.Id == update.Message.From.Id)
