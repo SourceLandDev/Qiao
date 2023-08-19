@@ -87,7 +87,7 @@ internal static class EventSystem
                             (await Bot.Client.GetChatAdministratorsAsync(update.Message.Chat.Id)).Any((chatMember) =>
                                 chatMember.User.Id == update.Message.From.Id)
                                 ? Level.RuncmdEx(
-                                    update.Message.Text[1..(update.Message.Text.Length - me.Username.Length - 1)]).Item2
+                                    update.Message.Text[1..(update.Message.Text.Length - me.Username.Length - 1)]).Item2.Escape()
                                 : Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.commandfeedback.notop"]),
                         update.Message.MessageId);
                     return;
