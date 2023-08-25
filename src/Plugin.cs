@@ -24,10 +24,6 @@ public sealed class Plugin : IPluginInitializer
 
         I18nHelper = new I18nHelper(Path.Combine(path, "languagePack"));
 
-        ServerStartedEvent.Event += _ =>
-        {
-            Bot.Initialize();
-            return default;
-        };
+        Bot.Initialize();
     }
 }
