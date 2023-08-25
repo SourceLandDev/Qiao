@@ -77,12 +77,12 @@ internal static class EventSystem
             {
                 throw new NullReferenceException();
             }
-            string outmsg;
             if (update.Type != UpdateType.Message || update.Message is null || update.Message.Chat.Id != Main.Config.ChatId)
             {
                 return;
             }
 
+            string outmsg;
             switch (update.Message.Type)
             {
                 case MessageType.Text:
