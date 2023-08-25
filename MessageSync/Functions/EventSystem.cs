@@ -12,12 +12,16 @@ namespace MessageSync.Functions;
 
 internal static class EventSystem
 {
-    private static string _prePlayer;
+    private static string? _prePlayer;
 
     internal static void SetupPlayer()
     {
         PlayerChatEvent.Event += ev =>
         {
+            if (Bot.Client is null)
+            {
+                throw new NullReferenceException();
+            }
             string message = ev.Message.Escape().Format();
             if (string.IsNullOrWhiteSpace(message))
             {
@@ -33,6 +37,10 @@ internal static class EventSystem
         };
         PlayerJoinEvent.Event += ev =>
         {
+            if (Bot.Client is null)
+            {
+                throw new NullReferenceException();
+            }
             if (Main.Config.MessageThreadId == Main.Config.InfoThreadId)
             {
                 _prePlayer = default;
@@ -45,6 +53,10 @@ internal static class EventSystem
         };
         PlayerLeftEvent.Event += ev =>
         {
+            if (Bot.Client is null)
+            {
+                throw new NullReferenceException();
+            }
             if (Main.Config.MessageThreadId == Main.Config.InfoThreadId)
             {
                 _prePlayer = default;
@@ -61,8 +73,12 @@ internal static class EventSystem
     {
         Bot.Received += async (_, update) =>
         {
-            string outmsg = default;
-            if (update.Type != UpdateType.Message || update.Message.Chat.Id != Main.Config.ChatId)
+            if (Bot.Client is null)
+            {
+                throw new NullReferenceException();
+            }
+            string outmsg;
+            if (update.Type != UpdateType.Message || update.Message is null || update.Message.Chat.Id != Main.Config.ChatId)
             {
                 return;
             }
@@ -70,6 +86,10 @@ internal static class EventSystem
             switch (update.Message.Type)
             {
                 case MessageType.Text:
+                    if (update.Message.Text is null)
+                    {
+                        throw new NullReferenceException();
+                    }
                     if (!update.Message.Text.StartsWith("/"))
                     {
                         outmsg = update.Message.Text;
@@ -84,12 +104,12 @@ internal static class EventSystem
 
                     Bot.Client.Enqueue(Main.Config.ChatId, update.Message.MessageThreadId ?? Main.Config.InfoThreadId,
                         Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.commandfeedback",
-                            (await Bot.Client.GetChatAdministratorsAsync(update.Message.Chat.Id)).Any((chatMember) =>
+                            (await Bot.Client.GetChatAdministratorsAsync(update.Message.Chat.Id)).Any(chatMember =>
                                 chatMember.User.Id == update.Message.From.Id)
                                 ? Level.RuncmdEx(
                                     update.Message.Text[1..(update.Message.Text.Length - me.Username.Length - 1)]).Item2.Escape()
                                 : Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.commandfeedback.notop"]),
-                        update.Message.MessageId);
+                        reply: update.Message.MessageId);
                     return;
                 case MessageType.Unknown:
                     outmsg = Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.type.unknown"];
@@ -278,6 +298,10 @@ internal static class EventSystem
         };
         ServerStartedEvent.Event += ev =>
         {
+            if (Bot.Client is null)
+            {
+                throw new NullReferenceException();
+            }
             if (string.IsNullOrWhiteSpace(Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.server.start"]))
             {
                 return true;
@@ -296,6 +320,10 @@ internal static class EventSystem
         };
         ServerStoppedEvent.Event += ev =>
         {
+            if (Bot.Client is null)
+            {
+                throw new NullReferenceException();
+            }
             if (string.IsNullOrWhiteSpace(Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.server.stop"]))
             {
                 return true;

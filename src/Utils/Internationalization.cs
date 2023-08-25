@@ -17,7 +17,7 @@ internal class Internationalization
     /// <param name="key">键</param>
     /// <param name="values">参数</param>
     /// <returns>翻译完成的信息</returns>
-    internal string Translate(string key, params object[] values) => !_languageData.TryGetValue(key, out string value)
+    internal string Translate(string key, params object[] values) => !_languageData.TryGetValue(key, out string? value)
         ? key
         : string.Format(value, values);
 

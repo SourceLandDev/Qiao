@@ -7,10 +7,10 @@ using Telegram.Bot.Types;
 
 namespace Qiao;
 
-public class Bot
+public static class Bot
 {
-    public static TelegramBotClient Client { get; private set; }
-    public static event EventHandler<Update> Received;
+    public static TelegramBotClient? Client { get; private set; }
+    public static event EventHandler<Update>? Received;
 
     internal static void Initialize()
     {

@@ -14,9 +14,9 @@ internal static class MarkdownHelper
     {
         StringBuilder stringBuilder = new(input);
         StringBuilder cacheEnding = new();
-        for (int index = stringBuilder.ToString().IndexOf("§");
+        for (int index = stringBuilder.ToString().IndexOf("§", StringComparison.Ordinal);
              index > -1 && index + 1 != stringBuilder.Length;
-             index = stringBuilder.ToString().IndexOf("§", index + 1))
+             index = stringBuilder.ToString().IndexOf("§", index + 1, StringComparison.Ordinal))
         {
             switch (char.ToUpperInvariant(stringBuilder[index + 1]))
             {

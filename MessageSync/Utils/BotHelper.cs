@@ -7,9 +7,9 @@ using Telegram.Bot.Types.Enums;
 
 namespace MessageSync.Utils;
 
-internal record class Message(long ChatId, int MessageThreadId, string Text, int? Reply = default);
+internal record Message(long ChatId, int? MessageThreadId, string Text, Action<Telegram.Bot.Types.Message?>? Callback = default, int? Reply = default);
 
-internal static class BotHelper
+public static class BotHelper
 {
     private static readonly ConcurrentQueue<Message> ts_messages;
 
@@ -19,7 +19,7 @@ internal static class BotHelper
     {
         ts_messages = new();
         s_resetEvent = new(false);
-        Thread thread = new(async () =>
+        Thread thread = new(() =>
         {
             while (true)
             {
@@ -27,9 +27,10 @@ internal static class BotHelper
                 {
                     continue;
                 }
-                while (ts_messages.TryDequeue(out Message message))
+                while (ts_messages.TryDequeue(out Message? message))
                 {
-                    await Bot.Client.SendMessageAsync(message.ChatId, message.MessageThreadId, message.Text, message.Reply);
+                    Telegram.Bot.Types.Message? msg = Bot.Client.SendMessageAsync(message.ChatId, message.MessageThreadId, message.Text, message.Reply).Result;
+                    message.Callback?.Invoke(msg);
                 }
                 s_resetEvent.WaitOne();
             }
@@ -41,15 +42,15 @@ internal static class BotHelper
         thread.Start();
     }
 
-    public static void Enqueue(this ITelegramBotClient _, long chatId,
-        int messageThreadId, string message, int? reply = default)
+    public static void Enqueue(this ITelegramBotClient _, long chatId, int? messageThreadId, string message,
+        Action<Telegram.Bot.Types.Message?>? callback = default, int? reply = default)
     {
-        ts_messages.Enqueue(new(chatId, messageThreadId, message, reply));
+        ts_messages.Enqueue(new(chatId, messageThreadId, message, callback, reply));
         s_resetEvent.Set();
     }
 
-    public static async Task<Telegram.Bot.Types.Message> SendMessageAsync(this ITelegramBotClient botClient, long chatId,
-        int messageThreadId, string message, int? reply = default)
+    public static async Task<Telegram.Bot.Types.Message?> SendMessageAsync(this ITelegramBotClient botClient, long chatId,
+        int? messageThreadId, string message, int? reply = default)
     {
         while (true)
         {

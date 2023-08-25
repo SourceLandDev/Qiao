@@ -18,7 +18,7 @@ internal class I18nHelper
 
     private readonly Dictionary<string, Internationalization> _language = new();
 
-    internal bool TryGetLanguageData(string languageCode, out Internationalization languageData) =>
+    internal bool TryGetLanguageData(string languageCode, out Internationalization? languageData) =>
         _language.TryGetValue(languageCode, out languageData);
 
     internal void AddLanguage(string languageCode, Internationalization languageData) =>
@@ -28,7 +28,7 @@ internal class I18nHelper
     {
         get
         {
-            if (TryGetLanguageData(languageCode, out Internationalization languageData))
+            if (TryGetLanguageData(languageCode, out Internationalization? languageData))
             {
                 return languageData;
             }

@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace MessageSync.Utils;
 
-internal record ConfigHelper([property: JsonPropertyName("chat_id")]
+public record ConfigHelper([property: JsonPropertyName("chat_id")]
     long ChatId,
     [property: JsonPropertyName("message_thread_id")]
     int MessageThreadId,
