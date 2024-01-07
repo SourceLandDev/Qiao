@@ -1,13 +1,18 @@
+using Qiao;
 using System.Collections.Concurrent;
 using System.Globalization;
-using Qiao;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types.Enums;
 
 namespace MessageSync.Utils;
 
-internal record Message(long ChatId, int? MessageThreadId, string Text, Action<Telegram.Bot.Types.Message?>? Callback = default, int? Reply = default);
+internal record Message(
+    long ChatId,
+    int? MessageThreadId,
+    string Text,
+    Action<Telegram.Bot.Types.Message?>? Callback = default,
+    int? Reply = default);
 
 public static class BotHelper
 {
@@ -27,11 +32,14 @@ public static class BotHelper
                 {
                     continue;
                 }
+
                 while (ts_messages.TryDequeue(out Message? message))
                 {
-                    Telegram.Bot.Types.Message? msg = Bot.Client.SendMessageAsync(message.ChatId, message.MessageThreadId, message.Text, message.Reply).Result;
+                    Telegram.Bot.Types.Message? msg = Bot.Client.SendMessageAsync(message.ChatId,
+                        message.MessageThreadId, message.Text, message.Reply).Result;
                     message.Callback?.Invoke(msg);
                 }
+
                 s_resetEvent.WaitOne();
             }
         })
@@ -49,7 +57,8 @@ public static class BotHelper
         s_resetEvent.Set();
     }
 
-    public static async Task<Telegram.Bot.Types.Message?> SendMessageAsync(this ITelegramBotClient botClient, long chatId,
+    public static async Task<Telegram.Bot.Types.Message?> SendMessageAsync(this ITelegramBotClient botClient,
+        long chatId,
         int? messageThreadId, string message, int? reply = default)
     {
         while (true)
@@ -57,9 +66,9 @@ public static class BotHelper
             try
             {
                 return await botClient.SendTextMessageAsync(chatId, message,
-                    messageThreadId: (await botClient.GetChatAsync(chatId)).IsForum ?? false
+                    (await botClient.GetChatAsync(chatId)).IsForum ?? false
                         ? messageThreadId
-                        : default, parseMode: ParseMode.MarkdownV2, replyToMessageId: reply);
+                        : default, ParseMode.MarkdownV2, replyToMessageId: reply);
             }
             catch (ApiRequestException ex) when (ex.Message.Contains("Too Many Requests"))
             {

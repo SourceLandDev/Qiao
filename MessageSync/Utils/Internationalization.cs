@@ -11,15 +11,18 @@ internal class Internationalization
         _name = name;
     }
 
+    internal string this[string languageCode] => Translate(languageCode);
+
     /// <summary>
-    /// 获取翻译
+    ///     获取翻译
     /// </summary>
     /// <param name="key">键</param>
     /// <param name="values">参数</param>
     /// <returns>翻译完成的信息</returns>
-    internal string Translate(string key, params object[] values) => !_languageData.TryGetValue(key, out string? value)
-        ? key
-        : string.Format(value, values);
-
-    internal string this[string languageCode] => Translate(languageCode);
+    internal string Translate(string key, params object[] values)
+    {
+        return !_languageData.TryGetValue(key, out string? value)
+            ? key
+            : string.Format(value, values);
+    }
 }

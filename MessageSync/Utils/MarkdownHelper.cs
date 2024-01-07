@@ -4,19 +4,22 @@ namespace MessageSync.Utils;
 
 internal static class MarkdownHelper
 {
-    internal static string Escape(this string input) => new StringBuilder(input).Replace("_", "\\_")
-        .Replace("*", "\\*").Replace("[", "\\[").Replace("]", "\\]").Replace("(", "\\(").Replace(")", "\\)")
-        .Replace("~", "\\~").Replace("`", "\\`").Replace(">", "\\>").Replace("#", "\\#").Replace("+", "\\+")
-        .Replace("-", "\\-").Replace("=", "\\=").Replace("|", "\\|").Replace("{", "\\{").Replace("}", "\\}")
-        .Replace(".", "\\.").Replace("!", "\\!").ToString();
+    internal static string Escape(this string input)
+    {
+        return new StringBuilder(input).Replace("_", "\\_")
+            .Replace("*", "\\*").Replace("[", "\\[").Replace("]", "\\]").Replace("(", "\\(").Replace(")", "\\)")
+            .Replace("~", "\\~").Replace("`", "\\`").Replace(">", "\\>").Replace("#", "\\#").Replace("+", "\\+")
+            .Replace("-", "\\-").Replace("=", "\\=").Replace("|", "\\|").Replace("{", "\\{").Replace("}", "\\}")
+            .Replace(".", "\\.").Replace("!", "\\!").ToString();
+    }
 
     internal static string Format(this string input)
     {
         StringBuilder stringBuilder = new(input);
         StringBuilder cacheEnding = new();
-        for (int index = stringBuilder.ToString().IndexOf("§", StringComparison.Ordinal);
+        for (int index = stringBuilder.ToString().IndexOf('§');
              index > -1 && index + 1 != stringBuilder.Length;
-             index = stringBuilder.ToString().IndexOf("§", index + 1, StringComparison.Ordinal))
+             index = stringBuilder.ToString().IndexOf('§', index + 1))
         {
             switch (char.ToUpperInvariant(stringBuilder[index + 1]))
             {

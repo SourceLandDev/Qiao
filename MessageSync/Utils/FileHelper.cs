@@ -3,7 +3,7 @@ namespace MessageSync.Utils;
 internal static class FileHelper
 {
     /// <summary>
-    /// 获取DirectoryInfo，不存在时自动创建
+    ///     获取DirectoryInfo，不存在时自动创建
     /// </summary>
     /// <param name="path">文件夹目录</param>
     /// <returns>文件夹DirectoryInfo对象</returns>
@@ -19,7 +19,7 @@ internal static class FileHelper
     }
 
     /// <summary>
-    /// 读取文件全部文字，不存在时自动创建
+    ///     读取文件全部文字，不存在时自动创建
     /// </summary>
     /// <param name="path">文件目录</param>
     /// <param name="defaultValue">创建时的默认内容</param>

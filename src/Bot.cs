@@ -26,7 +26,7 @@ public static class Bot
             {
                 try
                 {
-                    Client.StartReceiving((botClient, update, _) => Received(botClient, update),
+                    Client.StartReceiving((botClient, update, _) => Received!(botClient, update),
                         (_, exception, _) =>
                         {
                             switch (exception)

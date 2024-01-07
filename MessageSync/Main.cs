@@ -9,23 +9,25 @@ namespace MessageSync;
 public sealed class Main : IPluginInitializer
 {
     internal const string PluginName = "MessageSync";
-    public string Introduction => "消息同步";
-    public Dictionary<string, string> MetaData => new();
-    internal static Logger Logger = new(PluginName);
+    internal static Logger Logger;
     internal static I18nHelper I18nHelper;
     internal static I18nHelper EmojiHelper;
     public static ConfigHelper Config;
+    public string Introduction => "消息同步";
+    public Dictionary<string, string> MetaData => new();
 
     public void OnInitialize()
     {
+        Logger = new(PluginName);
+
         string path = Path.Combine("plugins", PluginName);
         FileHelper.CheckDir(path);
 
-        Config = new ConfigHelper(Path.Combine(path, "config.json"));
+        Config = new(Path.Combine(path, "config.json"));
 
-        I18nHelper = new I18nHelper(Path.Combine(path, "languagePack"));
+        I18nHelper = new(Path.Combine(path, "languagePack"));
 
-        EmojiHelper = new I18nHelper(Path.Combine(path, "emojiDescription"));
+        EmojiHelper = new(Path.Combine(path, "emojiDescription"));
 
         EventSystem.SetupPlayer();
 

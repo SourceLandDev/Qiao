@@ -22,6 +22,7 @@ internal static class EventSystem
             {
                 throw new NullReferenceException();
             }
+
             string message = ev.Message.Escape().Format();
             if (string.IsNullOrWhiteSpace(message))
             {
@@ -41,6 +42,7 @@ internal static class EventSystem
             {
                 throw new NullReferenceException();
             }
+
             if (Main.Config.MessageThreadId == Main.Config.InfoThreadId)
             {
                 _prePlayer = default;
@@ -57,6 +59,7 @@ internal static class EventSystem
             {
                 throw new NullReferenceException();
             }
+
             if (Main.Config.MessageThreadId == Main.Config.InfoThreadId)
             {
                 _prePlayer = default;
@@ -77,7 +80,9 @@ internal static class EventSystem
             {
                 throw new NullReferenceException();
             }
-            if (update.Type != UpdateType.Message || update.Message is null || update.Message.Chat.Id != Main.Config.ChatId)
+
+            if (update.Type is not UpdateType.Message || update.Message is null ||
+                update.Message.Chat.Id != Main.Config.ChatId)
             {
                 return;
             }
@@ -90,9 +95,10 @@ internal static class EventSystem
                     {
                         throw new NullReferenceException();
                     }
-                    if (!update.Message.Text.StartsWith("/"))
+
+                    if (!update.Message.Text.StartsWith('/'))
                     {
-                        outmsg = update.Message.Text;
+                        outmsg = update.Message.Text.Replace('\n', ' ');
                         break;
                     }
 
@@ -107,7 +113,9 @@ internal static class EventSystem
                             (await Bot.Client.GetChatAdministratorsAsync(update.Message.Chat.Id)).Any(chatMember =>
                                 chatMember.User.Id == update.Message.From.Id)
                                 ? Level.RuncmdEx(
-                                    update.Message.Text[1..(update.Message.Text.Length - me.Username.Length - 1)]).Item2.Escape()
+                                        update.Message.Text[1..(update.Message.Text.Length - me.Username.Length - 1)])
+                                    .Item2
+                                    .Escape()
                                 : Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.commandfeedback.notop"]),
                         reply: update.Message.MessageId);
                     return;
@@ -213,8 +221,12 @@ internal static class EventSystem
                 case MessageType.Dice:
                     outmsg = Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.type.dice",
                         update.Message.Dice.Value,
-                        update.Message.Dice.Emoji is "🏀" or "⚽" ? "5" :
-                        update.Message.Dice.Emoji == "🎰" ? "64" : "6");
+                        update.Message.Dice.Emoji switch
+                        {
+                            "🏀" or "⚽" => "5",
+                            "🎰" => "64",
+                            _ => "6"
+                        });
                     break;
                 case MessageType.MessageAutoDeleteTimerChanged:
                     outmsg = Main.I18nHelper[CultureInfo.CurrentCulture.Name][
@@ -263,6 +275,15 @@ internal static class EventSystem
                 case MessageType.WriteAccessAllowed:
                     outmsg = Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.type.writeaccessallowed"];
                     break;
+                case MessageType.UserShared:
+                    outmsg = Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.type.usershared"];
+                    break;
+                case MessageType.ChatShared:
+                    outmsg = Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.type.chatshared"];
+                    break;
+                case MessageType.Story:
+                    outmsg = Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.type.story"];
+                    break;
                 default:
                     outmsg = Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.type.unsupportedtype"];
                     break;
@@ -276,8 +297,9 @@ internal static class EventSystem
             outmsg = Main.EmojiHelper[CultureInfo.CurrentCulture.Name]._languageData
                 .Aggregate(outmsg, (current, emoji) => current.Replace(emoji.Key, emoji.Value));
             Level.BroadcastText(
-                update.Message.ReplyToMessage is null || (update.Message.IsTopicMessage ?? false) &&
-                update.Message.MessageThreadId == update.Message.ReplyToMessage.MessageId
+                update.Message.ReplyToMessage is null || ((update.Message.IsTopicMessage ?? false) &&
+                                                          update.Message.MessageThreadId ==
+                                                          update.Message.ReplyToMessage.MessageId)
                     ? Main.I18nHelper[CultureInfo.CurrentCulture.Name].Translate("message.toserver",
                         update.Message.Date.AddHours(TimeZoneInfo.Local.BaseUtcOffset.Hours),
                         update.Message.SenderChat == null
@@ -296,12 +318,13 @@ internal static class EventSystem
                             : update.Message.ReplyToMessage.SenderChat.Title, outmsg), TextType.Raw);
             _prePlayer = default;
         };
-        ServerStartedEvent.Event += ev =>
+        ServerStartedEvent.Event += _ =>
         {
             if (Bot.Client is null)
             {
                 throw new NullReferenceException();
             }
+
             if (string.IsNullOrWhiteSpace(Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.server.start"]))
             {
                 return true;
@@ -318,12 +341,13 @@ internal static class EventSystem
                 Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.server.start"]);
             return true;
         };
-        ServerStoppedEvent.Event += ev =>
+        ServerStoppedEvent.Event += _ =>
         {
             if (Bot.Client is null)
             {
                 throw new NullReferenceException();
             }
+
             if (string.IsNullOrWhiteSpace(Main.I18nHelper[CultureInfo.CurrentCulture.Name]["message.server.stop"]))
             {
                 return true;
