@@ -1,0 +1,11 @@
+<Project>
+    <PropertyGroup>
+        <Version>1.0.7</Version>
+        <Authors>SourceLand Developers</Authors>
+        <Title>Qiao</Title>
+        <Description>im bot api for Minecraft, powered by 星光</Description>
+        <License>AGPL-3.0-or-later</License>
+        <ProjectUrl>https://www.srcld.top</ProjectUrl>
+        <Tags>sourceland</Tags>
+    </PropertyGroup>
+</Project>
